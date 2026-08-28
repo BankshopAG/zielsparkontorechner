@@ -1,0 +1,2514 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ZielsparKonto — Vermögensverwaltung von Baumann &amp; Partners mit Rückblick-, Sparplan- und Anlagezielrechner. Vermittelt durch CEB Bankshop AG.">
+<title>ZielsparKonto — Vermögensverwaltung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap">
+<style>
+/* ============================================================
+   ZIELSPARKONTO — Verkaufsseite Vermögensverwaltung
+   Heller Lesegrund, Mitternachtsblau #12213D als Hausfarbe,
+   Petrol als Akzent. Eine geradlinige Grotesk durchgehend.
+   Alle Farben explizit, damit die Seite überall gleich aussieht.
+   ============================================================ */
+
+:root{
+  --paper:#F6F8FB;
+  --paper-2:#FFFFFF;
+  --paper-3:#EBEFF6;
+  --navy:#12213D;
+  --navy-2:#1C3059;
+  --navy-3:#4C5D7C;
+  --navy-4:#7A88A3;
+  --line:#DBE2ED;
+  --line-2:#C6D0E0;
+
+  --teal-text:#0B5E55;
+  --teal:#12857A;
+  --teal-line:#17A08D;
+  --teal-soft:#E6F3F0;
+
+  --green:#2E6B47;
+  --oxide:#A6402A;
+
+  --p1:#4C7FA6;   /* Protect 20   */
+  --p2:#12857A;   /* Balance      */
+  --p3:#C08327;   /* Dynamic      */
+  --p4:#B0523A;   /* Index Chance */
+
+  --f:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-c:"IBM Plex Sans Condensed","IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+
+  --w:1080px;
+  --pad:clamp(18px,4.5vw,40px);
+  --r:6px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{scroll-behavior:smooth;scroll-padding-top:78px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--navy);
+  font-family:var(--f);
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,canvas,svg{max-width:100%;display:block}
+::selection{background:#CDEAE3;color:var(--navy)}
+:focus-visible{outline:2.5px solid var(--teal);outline-offset:3px;border-radius:3px}
+
+/* ---------- Typografie ---------- */
+h1,h2,h3{font-family:var(--f);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.018em;color:var(--navy)}
+h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08}
+h2{font-size:clamp(1.65rem,3.4vw,2.5rem);line-height:1.14}
+h3{font-size:clamp(1.15rem,1.9vw,1.4rem);line-height:1.3;font-weight:600}
+p{margin:0}
+
+.eyebrow{font-family:var(--f);font-size:.75rem;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--teal-text)}
+.lede{font-size:clamp(1.0625rem,1.5vw,1.1875rem);line-height:1.62;color:var(--navy-3);max-width:60ch}
+.small{font-size:.9375rem;line-height:1.58;color:var(--navy-3)}
+.mini{font-size:.8125rem;line-height:1.55;color:var(--navy-4)}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.big{font-family:var(--f-c);font-weight:600;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;font-size:1.5rem}
+
+/* Kennzahlen-Leiste */
+.ticks{display:grid;gap:1px;margin:0;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16);border-radius:var(--r);overflow:hidden}
+.ticks > div{background:var(--navy);padding:15px 18px;display:flex;flex-direction:column;gap:5px}
+.ticks dt{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#8FA1C0}
+.ticks dd{margin:0;font-family:var(--f-c);font-weight:600;font-size:1.6rem;line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#8FE0D0}
+.ticks dd.plain{color:#EAF0F7}
+.ticks dd.warn{color:#E9A692}
+.ticks p{margin:0;font-size:.75rem;color:#8FA1C0}
+
+/* ---------- Struktur ---------- */
+.wrap{max-width:var(--w);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.band{padding:clamp(56px,7.5vw,96px) 0}
+.band--w{background:var(--paper-2)}
+.band--t{background:var(--paper-3)}
+.band--navy{background:var(--navy);color:#E9EEF7}
+.band--navy h1,.band--navy h2,.band--navy h3{color:#FFFFFF}
+.band--navy .lede,.band--navy .small{color:#B9C6DC}
+.band--navy .eyebrow{color:var(--teal-line)}
+
+.stack{display:flex;flex-direction:column}
+.gap-xs{gap:8px}.gap-s{gap:14px}.gap-m{gap:22px}.gap-l{gap:36px}.gap-xl{gap:56px}
+.center{text-align:center;align-items:center}
+.center .lede{margin-left:auto;margin-right:auto}
+
+.grid{display:grid;gap:clamp(14px,1.8vw,20px)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g2t{grid-template-columns:repeat(auto-fit,minmax(232px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(238px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(216px,1fr))}
+
+/* ---------- Kopfzeile ---------- */
+header.top{position:sticky;top:0;z-index:60;
+  background:rgba(246,248,251,.92);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;height:66px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);flex:none}
+.brand svg{width:26px;height:26px;flex:none}
+.brand b{font-weight:600;font-size:.9375rem;letter-spacing:-.01em}
+.brand span{font-size:.75rem;color:var(--navy-4);font-weight:500}
+nav.jump{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.jump::-webkit-scrollbar{display:none}
+nav.jump a{text-decoration:none;color:var(--navy-3);font-size:.875rem;font-weight:500;
+  padding:8px 12px;border-radius:99px;white-space:nowrap;transition:background .15s,color .15s}
+nav.jump a:hover{background:var(--paper-3);color:var(--navy)}
+@media(max-width:980px){nav.jump{display:none}}
+
+/* ---------- Schaltflächen ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-family:var(--f);font-size:1rem;font-weight:600;letter-spacing:-.005em;
+  padding:14px 26px;border-radius:var(--r);border:1.5px solid transparent;cursor:pointer;
+  text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease}
+.btn--teal{background:var(--teal);color:#FFFFFF;box-shadow:0 6px 18px -8px rgba(18,133,122,.65)}
+.btn--teal:hover{background:#0F6F66;transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(18,133,122,.8)}
+.btn--navy{background:var(--navy);color:#FFFFFF}
+.btn--navy:hover{background:var(--navy-2);transform:translateY(-2px)}
+.btn--line{background:transparent;color:var(--navy);border-color:var(--line-2)}
+.btn--line:hover{border-color:var(--navy);transform:translateY(-2px)}
+.btn--sm{font-size:.9375rem;padding:11px 18px}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px}
+
+/* ---------- Karten ---------- */
+.card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,2.4vw,28px)}
+.card--soft{background:var(--teal-soft);border-color:#C9E4DD}
+.card--navy{background:var(--navy);border-color:var(--navy);color:#E9EEF7}
+.card--navy h3{color:#FFF}
+.card--navy .small{color:#B9C6DC}
+
+.feat{display:flex;flex-direction:column;gap:10px}
+.feat .ico{width:34px;height:34px;color:var(--teal-text)}
+.feat p{color:var(--navy-3);font-size:.9375rem;line-height:1.56}
+
+/* ---------- Rechner ---------- */
+.tool{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(18,33,61,.04),0 18px 40px -32px rgba(18,33,61,.35)}
+.tool-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px clamp(16px,2.2vw,26px);border-bottom:1px solid var(--line);background:var(--paper)}
+.tool-head .label{font-size:.8125rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--navy-4)}
+.tool-body{padding:clamp(18px,2.6vw,30px);display:grid;gap:clamp(20px,2.8vw,32px);grid-template-columns:minmax(0,1fr);align-items:start}
+@media(min-width:900px){
+  .tool-body{grid-template-columns:minmax(0,308px) minmax(0,1fr)}
+  .tool-body > form{position:sticky;top:84px}
+}
+
+fieldset{border:0;margin:0;padding:0}
+legend{padding:0}
+
+.field{display:flex;flex-direction:column;gap:7px}
+.field-label{font-size:.8125rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--navy-4);
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.field-val{font-size:.9375rem;font-weight:600;color:var(--teal-text);letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+
+.inp{display:flex;align-items:center;background:var(--paper-2);border:1.5px solid var(--line-2);border-radius:var(--r);transition:border-color .15s}
+.inp:focus-within{border-color:var(--teal)}
+.inp input{flex:1;min-width:0;background:transparent;border:0;color:var(--navy);
+  font-family:var(--f);font-size:1.125rem;font-weight:600;padding:12px 14px;font-variant-numeric:tabular-nums}
+.inp input:focus{outline:none}
+.inp input::-webkit-outer-spin-button,.inp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.inp input[type=number]{-moz-appearance:textfield}
+.inp .unit{font-size:.875rem;font-weight:500;color:var(--navy-4);padding-right:14px;flex:none}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:transparent;margin:0;height:26px;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line-2);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line-2);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-9px;border-radius:50%;
+  background:var(--teal);border:1.5px solid #0B5E55;box-shadow:0 1px 4px rgba(18,33,61,.3)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border:1.5px solid #0B5E55;border-radius:50%;
+  background:var(--teal);box-shadow:0 1px 4px rgba(18,33,61,.3)}
+
+.dual{position:relative;height:34px;margin-top:2px}
+.dual .track{position:absolute;top:15px;left:11px;right:11px;height:4px;background:var(--line-2);border-radius:4px}
+.dual .fill{position:absolute;top:15px;height:4px;background:var(--teal);border-radius:4px}
+.dual input[type=range]{position:absolute;top:4px;left:0;width:100%;pointer-events:none;background:none}
+.dual input[type=range]::-webkit-slider-runnable-track{background:transparent}
+.dual input[type=range]::-moz-range-track{background:transparent}
+.dual input[type=range]::-webkit-slider-thumb{pointer-events:auto}
+.dual input[type=range]::-moz-range-thumb{pointer-events:auto}
+.dual-scale{display:flex;justify-content:space-between;font-size:.75rem;font-weight:500;color:var(--navy-4);font-variant-numeric:tabular-nums}
+
+/* Portfolio-Wahl */
+.pf{display:grid;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.pf button{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;
+  background:var(--paper-2);border:1.5px solid var(--line-2);border-radius:var(--r);cursor:pointer;
+  padding:9px 11px;font-family:var(--f);transition:border-color .15s,background .15s,box-shadow .15s}
+.pf button:hover{border-color:var(--navy-4)}
+.pf button b{font-size:.875rem;font-weight:600;color:var(--navy);line-height:1.25}
+.pf button i{font-style:normal;font-size:.6875rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--navy-4)}
+.pf button[aria-pressed=true]{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor;background:var(--paper)}
+.pf button[aria-pressed=true] i{color:inherit}
+
+.seg{display:flex;background:var(--paper-3);border-radius:var(--r);padding:4px;gap:4px}
+.seg button{flex:1;background:transparent;border:0;border-radius:4px;cursor:pointer;padding:10px 8px;
+  font-family:var(--f);font-size:.9375rem;font-weight:600;color:var(--navy-3);transition:background .15s,color .15s}
+.seg button:hover{color:var(--navy)}
+.seg button[aria-pressed=true]{background:var(--paper-2);color:var(--navy);box-shadow:0 1px 3px rgba(18,33,61,.14)}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:var(--paper-2);border:1.5px solid var(--line-2);border-radius:99px;color:var(--navy-3);
+  font-family:var(--f);font-size:.8125rem;font-weight:600;padding:7px 13px;cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s}
+.chip:hover{border-color:var(--teal);color:var(--teal-text)}
+.chip[aria-pressed=true]{background:var(--teal-soft);border-color:var(--teal-line);color:var(--teal-text)}
+
+/* Ergebnis */
+.result{background:var(--navy);border-radius:8px;padding:clamp(20px,2.6vw,28px);display:flex;flex-direction:column;gap:8px}
+.result dt{font-size:.8125rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#8FA1C0}
+.result dd{margin:0;font-family:var(--f-c);font-weight:600;font-size:clamp(2.2rem,5vw,3.2rem);line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#8FE0D0}
+.result .note{font-size:.9375rem;color:#B9C6DC;line-height:1.5}
+
+.stats{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}
+.stat{background:var(--paper-2);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.stat dt{font-size:.75rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--navy-4);line-height:1.35}
+.stat dd{margin:0;font-size:1.125rem;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+.stat dd.pos{color:var(--green)}
+.stat dd.neg{color:var(--oxide)}
+
+.chartbox{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 12px 8px;
+  display:flex;flex-direction:column;gap:9px;min-width:0}
+.chartbox canvas{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.75rem;font-weight:500;color:var(--navy-3)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:15px;height:3px;border-radius:3px;display:inline-block;flex:none}
+
+/* ---------- Zeitstrahl ---------- */
+.timeline{display:grid;gap:1px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tl{background:var(--paper-2);padding:22px 20px;display:flex;flex-direction:column;gap:6px}
+.tl.on{background:var(--teal-soft)}
+.tl-y{font-size:.75rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--teal-text)}
+.tl h3{font-size:1.0625rem}
+.tl p{font-size:.9375rem;color:var(--navy-3);line-height:1.5}
+
+/* ---------- Schritte ---------- */
+.steps{counter-reset:st;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.step{background:var(--paper-2);padding:20px clamp(18px,2.2vw,26px);display:grid;gap:4px 18px;
+  grid-template-columns:auto minmax(0,1fr);align-items:start}
+.step::before{counter-increment:st;content:counter(st);
+  width:26px;height:26px;border-radius:50%;background:var(--navy);color:#FFF;
+  display:grid;place-items:center;font-size:.8125rem;font-weight:600;flex:none}
+.step p{grid-column:2;color:var(--navy-3);font-size:.9375rem}
+
+/* ---------- Portfolio-Karten ---------- */
+.pcard{background:var(--paper-2);border:1px solid var(--line);border-top:3px solid currentColor;
+  border-radius:var(--r);padding:22px 20px;display:flex;flex-direction:column;gap:12px}
+.pcard h3{font-size:1.0625rem;color:var(--navy)}
+.pcard .risk{font-size:.6875rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.pcard .pa{font-family:var(--f-c);font-weight:600;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums;color:inherit}
+.pcard p{font-size:.875rem;line-height:1.5;color:var(--navy-3)}
+.pcard ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+.pcard li{font-size:.8125rem;color:var(--navy-3);display:flex;flex-wrap:wrap;
+  justify-content:space-between;align-items:baseline;gap:2px 10px;
+  padding:5px 0;border-top:1px solid var(--line)}
+.pcard li span{min-width:0}
+.pcard li b{font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;
+  white-space:nowrap;margin-left:auto}
+
+/* Chart als erstes Ergebnis — auf breiten Schirmen neben den Reglern klebend */
+@media(min-width:900px){ .chartbox--lead{position:sticky;top:84px;z-index:5} }
+
+/* ---------- Vorteilskarte ---------- */
+.boon{background:#F0F7F3;border:1px solid #CBE3D6;border-radius:var(--r);overflow:hidden}
+.boon-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+  padding:13px 18px;background:var(--green);color:#FFFFFF}
+.boon-head p{font-size:.8125rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.boon-head span{font-family:var(--f-c);font-weight:600;font-size:1.5rem;line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vz{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  padding:13px 18px;border-top:1px solid #DCEBE2}
+.vz:first-child{border-top:0}
+.vz b{font-size:.9375rem;font-weight:600;color:var(--navy);line-height:1.35}
+.vz .mini{color:#5D7A6A}
+.vz-foot{padding:11px 18px;border-top:1px solid #DCEBE2;font-size:.8125rem;line-height:1.5;color:#5D7A6A}
+.vz-w{font-family:var(--f-c);font-weight:600;font-size:1.375rem;line-height:1.2;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--green);white-space:nowrap;flex:none}
+@media(max-width:480px){
+  .vz{flex-direction:column;gap:4px}
+  .vz-w{font-size:1.25rem}
+}
+
+/* ---------- Strategie-Leiter ---------- */
+.lad{display:flex;flex-wrap:wrap;gap:7px}
+.lad button{display:inline-flex;align-items:baseline;gap:7px;cursor:pointer;
+  font-family:var(--f);font-size:.8125rem;font-weight:600;padding:7px 12px;
+  border-radius:99px;border:1.5px solid var(--line-2);background:var(--paper-2);
+  color:var(--navy-4);transition:border-color .18s,color .18s,background .18s,box-shadow .18s}
+.lad button:hover{border-color:var(--navy-4);color:var(--navy-3)}
+.lad button em{font-style:normal;font-weight:600;font-variant-numeric:tabular-nums;opacity:.75}
+.lad button.on{color:#FFFFFF;border-color:transparent;box-shadow:0 4px 12px -6px rgba(18,33,61,.55)}
+.lad button.on em{opacity:.85}
+
+/* ---------- Balken ---------- */
+.vs{display:flex;flex-direction:column;gap:16px}
+.vsrow{display:flex;flex-direction:column;gap:7px}
+.vshead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.vshead b{font-size:.9375rem;font-weight:600}
+.vshead span{font-family:var(--f-c);font-weight:600;font-size:1.375rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:520px){.vshead{flex-direction:column;align-items:flex-start;gap:1px}}
+.vsbar{height:26px;border-radius:4px;background:var(--paper-3);overflow:hidden}
+.vsbar i{display:block;height:100%;border-radius:4px}
+
+/* ---------- Fuß ---------- */
+footer{background:var(--navy);color:#B9C6DC;padding:clamp(44px,6vw,68px) 0 36px}
+footer .cols{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+footer h3{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-line);font-weight:600}
+footer p,footer li{font-size:.875rem;color:#B9C6DC;line-height:1.58}
+footer ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.disclaimer{margin-top:32px;padding-top:22px;border-top:1px solid rgba(255,255,255,.14);
+  font-size:.75rem;color:#8FA1C0;line-height:1.62;max-width:96ch}
+
+/* ---------- Hinweise ---------- */
+.hint{font-size:.8125rem;line-height:1.5;color:var(--navy-4)}
+.hint.warn{display:flex;gap:8px;align-items:flex-start;
+  background:var(--teal-soft);border:1px solid #C9E4DD;border-radius:var(--r);
+  padding:9px 11px;color:var(--teal-text);font-weight:500}
+.hint.warn::before{content:"";flex:none;width:7px;height:7px;margin-top:6px;border-radius:50%;background:var(--teal)}
+
+/* ---------- Zugangscode ---------- */
+body.locked{overflow:hidden}
+#gate{position:fixed;inset:0;z-index:200;background:var(--navy);
+  display:grid;place-items:center;padding:24px;overflow-y:auto}
+#gate[hidden]{display:none}
+.gate-box{width:100%;max-width:420px;display:flex;flex-direction:column;gap:24px;text-align:center;align-items:center}
+.gate-box .mark{display:flex;align-items:center;gap:10px}
+.gate-box .mark svg{width:30px;height:30px}
+.gate-box .mark b{color:#FFF;font-size:1rem;font-weight:600}
+.gate-box h2{color:#FFF;font-size:1.6rem}
+.gate-box p{color:#B9C6DC;font-size:.9375rem;line-height:1.55}
+.code-row{display:flex;gap:8px;justify-content:center;width:100%}
+.code-row input{width:100%;max-width:52px;aspect-ratio:3/4;min-width:0;
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.24);border-radius:6px;
+  color:#FFF;font-family:var(--f-c);font-weight:600;font-size:1.75rem;text-align:center;
+  font-variant-numeric:tabular-nums;transition:border-color .15s,background .15s;padding:0}
+.code-row input:focus{outline:none;border-color:var(--teal-line);background:rgba(255,255,255,.13)}
+.code-row input.filled{border-color:rgba(23,160,141,.6)}
+.gate-msg{min-height:22px;font-size:.875rem;font-weight:500;color:#E9A692}
+.gate-msg.ok{color:#8FD1A8}
+#gate.shake .code-row{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:reduce){#gate.shake .code-row{animation:none}}
+
+/* ---------- Dokumentleiste ---------- */
+.doc{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.doc-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.doc .inp input{font-size:1rem;font-weight:500}
+
+/* ---------- Druckdokument ---------- */
+#print{display:none}
+.pg{page-break-after:always;padding:0 0 8mm}
+.pg:last-child{page-break-after:auto}
+.pg-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  border-bottom:2px solid #12213D;padding-bottom:8px;margin-bottom:12px}
+.pg-head b{font-size:12pt;color:#12213D}
+.pg-head span{font-size:8pt;color:#4C5D7C;text-align:right;line-height:1.4}
+.pg h1{font-size:19pt;line-height:1.15;margin:0 0 4px}
+.pg h2{font-size:11pt;margin:11px 0 5px;color:#12213D}
+.pg p{font-size:9pt;line-height:1.5;color:#12213D}
+.pg .lead{font-size:9.5pt;color:#4C5D7C;margin-bottom:10px}
+.pg-hero{background:#12213D;color:#FFF;border-radius:4px;padding:12px 16px;margin:9px 0 10px;
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px}
+.pg-hero .lbl{font-size:8pt;letter-spacing:.08em;text-transform:uppercase;color:#8FA1C0}
+.pg-hero .val{font-size:26pt;font-weight:600;letter-spacing:-.02em;color:#8FE0D0;line-height:1}
+.pg-hero .sub{font-size:8.5pt;color:#B9C6DC;width:100%}
+.pg-kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;margin:8px 0}
+.pg-kv div{display:flex;justify-content:space-between;gap:10px;font-size:8.5pt;
+  padding:3px 0;border-bottom:1px solid #DBE2ED}
+.pg-kv b{font-weight:600;white-space:nowrap}
+table.pg-t{width:100%;border-collapse:collapse;font-size:8.5pt;margin:6px 0}
+table.pg-t th{text-align:right;font-weight:600;color:#4C5D7C;border-bottom:1.5px solid #12213D;padding:4px 5px}
+table.pg-t th:first-child{text-align:left}
+table.pg-t td{text-align:right;padding:3px 5px;border-bottom:1px solid #EBEFF6;font-variant-numeric:tabular-nums}
+table.pg-t td:first-child{text-align:left}
+table.pg-t tr.hi td{font-weight:600;background:#EBEFF6}
+.pg-img{width:100%;height:50mm;object-fit:contain;border:1px solid #DBE2ED;border-radius:4px;margin:6px 0;background:#FFF}
+.pg-boon{border:1px solid #CBE3D6;border-radius:4px;overflow:hidden;margin:8px 0}
+.pg-boon .hd{background:#2E6B47;color:#FFF;padding:6px 12px;display:flex;
+  justify-content:space-between;font-size:9pt;font-weight:600}
+.pg-boon .rw{padding:6px 12px;border-top:1px solid #DCEBE2;display:flex;
+  justify-content:space-between;gap:12px;font-size:8.5pt;background:#F0F7F3}
+.pg-boon .rw b{color:#2E6B47;white-space:nowrap}
+.pg-legal{font-size:7pt;line-height:1.45;color:#4C5D7C;margin-top:10px;
+  border-top:1px solid #DBE2ED;padding-top:8px;text-align:justify}
+.pg-legal b{color:#12213D}
+.pg-foot{margin-top:10px;padding-top:6px;border-top:1px solid #DBE2ED;
+  font-size:7.5pt;color:#7A88A3;display:flex;justify-content:space-between;gap:12px}
+
+@media print{
+  @page{size:A4 portrait;margin:14mm 13mm}
+  html,body{background:#FFF !important}
+  body{font-size:10pt}
+  body > *{display:none !important}
+  #print{display:block !important}
+  body.locked{overflow:visible}
+  .pg-hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pg-boon .hd,.pg-boon .rw,table.pg-t tr.hi td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* ---------- Einblendung ---------- */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  .rv{opacity:1;transform:none}
+}
+
+@media(max-width:640px){
+  body{font-size:16px}
+  .step{grid-template-columns:minmax(0,1fr)}
+  .step p{grid-column:1}
+  .pf{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<!-- ══════════════════ ZUGANGSCODE ══════════════════ -->
+<div id="gate" hidden>
+  <div class="gate-box">
+    <div class="mark">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="4" y="4" width="24" height="24" rx="3" fill="#1C3059"/>
+        <path d="M9 21.5 14 15l4 3.6L23 10" stroke="#17A08D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="23" cy="10" r="1.9" fill="#17A08D"/>
+      </svg>
+      <b>ZielsparKonto</b>
+    </div>
+    <div class="stack gap-s" style="align-items:center">
+      <h2>Ihr Zugangscode</h2>
+      <p>Bitte geben Sie den sechsstelligen Code ein, den Sie von Ihrem Berater erhalten haben.</p>
+    </div>
+    <div class="code-row" id="codeRow" role="group" aria-label="Sechsstelliger Zugangscode">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Ziffer 1">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Ziffer 2">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Ziffer 3">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Ziffer 4">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Ziffer 5">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Ziffer 6">
+    </div>
+    <p class="gate-msg" id="gateMsg" role="status" aria-live="polite"></p>
+    <button class="btn btn--teal" type="button" id="gateGo" style="width:100%">Berechnung öffnen</button>
+  </div>
+</div>
+
+<script>
+/* Zugangscode — einfache Zugangshürde, kein Sicherheitsmerkmal.
+   Der Code steht nicht im Klartext in der Datei, ist aber clientseitig
+   geprüft und damit für technisch versierte Besucher umgehbar.        */
+(function () {
+  'use strict';
+  var SALT = 'bp-zielsparkonto-2026:', TARGET = 1804638881, KEY = 'zsk-zugang';
+  var gate = document.getElementById('gate');
+  var row = document.getElementById('codeRow');
+  var boxes = [].slice.call(row.querySelectorAll('input'));
+  var msg = document.getElementById('gateMsg');
+  var go = document.getElementById('gateGo');
+
+  function hash(s) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  function stored(v) {
+    try { return v === undefined ? localStorage.getItem(KEY) : localStorage.setItem(KEY, v); }
+    catch (e) { return null; }
+  }
+  if (stored() === String(TARGET)) return;
+
+  gate.hidden = false;
+  document.body.classList.add('locked');
+  setTimeout(function () { boxes[0].focus(); }, 60);
+
+  function value() { return boxes.map(function (b) { return b.value; }).join(''); }
+
+  function open() {
+    stored(String(TARGET));
+    msg.textContent = 'Zugang bestätigt.';
+    msg.className = 'gate-msg ok';
+    gate.style.transition = 'opacity .35s ease';
+    gate.style.opacity = '0';
+    setTimeout(function () {
+      gate.hidden = true;
+      document.body.classList.remove('locked');
+      window.dispatchEvent(new Event('resize'));
+    }, 340);
+  }
+  function deny() {
+    msg.textContent = 'Dieser Code stimmt nicht. Bitte erneut versuchen.';
+    msg.className = 'gate-msg';
+    gate.classList.add('shake');
+    setTimeout(function () { gate.classList.remove('shake'); }, 420);
+    boxes.forEach(function (b) { b.value = ''; b.classList.remove('filled'); });
+    boxes[0].focus();
+  }
+  function check() {
+    var v = value();
+    if (v.length < 6) { msg.textContent = 'Bitte alle sechs Ziffern eingeben.'; msg.className = 'gate-msg'; return; }
+    if (hash(SALT + v) === TARGET) open(); else deny();
+  }
+
+  boxes.forEach(function (b, i) {
+    b.addEventListener('input', function () {
+      b.value = b.value.replace(/\D/g, '').slice(0, 1);
+      b.classList.toggle('filled', !!b.value);
+      msg.textContent = '';
+      if (b.value && i < boxes.length - 1) boxes[i + 1].focus();
+      if (value().length === 6) check();
+    });
+    b.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !b.value && i > 0) { boxes[i - 1].focus(); boxes[i - 1].value = ''; boxes[i - 1].classList.remove('filled'); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft' && i > 0) { boxes[i - 1].focus(); e.preventDefault(); }
+      else if (e.key === 'ArrowRight' && i < boxes.length - 1) { boxes[i + 1].focus(); e.preventDefault(); }
+      else if (e.key === 'Enter') { check(); e.preventDefault(); }
+    });
+    b.addEventListener('focus', function () { b.select(); });
+    b.addEventListener('paste', function (e) {
+      var t = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      if (!t) return;
+      e.preventDefault();
+      boxes.forEach(function (x, k) { x.value = t[k] || ''; x.classList.toggle('filled', !!x.value); });
+      boxes[Math.min(t.length, 5)].focus();
+      if (t.length === 6) check();
+    });
+  });
+  go.addEventListener('click', check);
+})();
+</script>
+
+<!-- ══════════════════ KOPFZEILE ══════════════════ -->
+<header class="top">
+  <div class="wrap topbar">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="4" y="4" width="24" height="24" rx="3" fill="#12213D"/>
+        <path d="M9 21.5 14 15l4 3.6L23 10" stroke="#17A08D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="23" cy="10" r="1.9" fill="#17A08D"/>
+      </svg>
+      <span class="stack"><b>ZielsparKonto</b><span>Vermögensverwaltung ab 50 € im Monat</span></span>
+    </a>
+    <nav class="jump" aria-label="Abschnitte">
+      <a href="#warum">Warum anlegen</a>
+      <a href="#rueckblick">Rückblick</a>
+      <a href="#sparplan">Ihr Sparplan</a>
+      <a href="#ziel">Ihr Anlageziel</a>
+      <a href="#portfolios">Strategien</a>
+      <a href="#flexibel">Flexibilität</a>
+    </nav>
+    <a class="btn btn--teal btn--sm" href="https://intranet.invgate.de/Account/Login" target="_blank" rel="noopener">Zum Antrag</a>
+  </div>
+</header>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="band band--navy" id="top" style="padding-top:clamp(56px,8vw,88px)">
+  <div class="wrap stack gap-l">
+    <div class="stack gap-m">
+      <p class="eyebrow">Vermögensverwaltung · Baumann &amp; Partners S.A.</p>
+      <h1>Sparen allein<br>reicht nicht mehr.</h1>
+    </div>
+    <p class="lede" style="max-width:53ch">Wer sein Geld seit 1970 auf dem Tagesgeldkonto liegen ließ,
+      hat nach Inflation etwa 1 % im Jahr verdient. Wer es weltweit anlegen ließ, deutlich mehr.
+      Rechnen Sie auf dieser Seite selbst nach — rückwärts und vorwärts.</p>
+
+    <div class="btn-row">
+      <a class="btn btn--teal" href="#sparplan">Sparplan rechnen</a>
+      <a class="btn btn--line" href="#rueckblick" style="color:#FFF;border-color:rgba(255,255,255,.34)">In die Vergangenheit schauen</a>
+    </div>
+
+    <dl class="ticks">
+      <div><dt>Weltaktien seit 1970</dt><dd>8,8 % p. a.</dd><p>in Euro, über 56 Jahre</p></div>
+      <div><dt>Anleihen seit 1970</dt><dd class="plain">5,3 % p. a.</dd><p>deutsche Renten, in Euro</p></div>
+      <div><dt>Tagesgeld seit 1970</dt><dd class="plain">3,7 % p. a.</dd><p>Bundesbank-Durchschnitt</p></div>
+      <div><dt>Inflation seit 1970</dt><dd class="warn">2,7 % p. a.</dd><p>aus 1 € wurden 23 Cent</p></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ══════════════════ WARUM ══════════════════ -->
+<section class="band band--w" id="warum">
+  <div class="wrap stack gap-l">
+
+    <div class="stack gap-s rv" style="max-width:62ch">
+      <p class="eyebrow">Warum überhaupt anlegen</p>
+      <h2>Vier Kurven, eine Entscheidung.</h2>
+      <p class="lede">Alle vier Linien starten 1970 bei 100. Der Abstand zwischen der obersten
+        und der untersten ist das, worum es bei der Geldanlage geht.</p>
+    </div>
+
+    <div class="chartbox rv">
+      <canvas id="chartLong" height="380" aria-label="Weltaktien, Anleihen, Tagesgeld und Verbraucherpreise seit 1970, indexiert auf 100"></canvas>
+      <div class="legend">
+        <span><i style="background:#12857A"></i>Weltaktien in Euro</span>
+        <span><i style="background:#4C7FA6"></i>Anleihen</span>
+        <span><i style="background:#7A88A3"></i>Tagesgeld</span>
+        <span><i style="background:#A6402A"></i>Verbraucherpreise</span>
+      </div>
+    </div>
+
+    <div class="grid g3 rv">
+      <div class="card card--soft"><div class="stack gap-xs">
+        <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-text)">Weltaktien</p>
+        <p class="big" style="font-size:2.6rem;color:var(--teal-text)">×110</p>
+        <p class="small">Aus 10.000 € wurden rund 1,1 Mio. € — bei erheblichen Schwankungen dazwischen.</p>
+      </div></div>
+      <div class="card"><div class="stack gap-xs">
+        <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase">Tagesgeld</p>
+        <p class="big" style="font-size:2.6rem;color:var(--navy-3)">×8</p>
+        <p class="small">Sicher im Nennwert, aber knapp über der Inflationslinie.</p>
+      </div></div>
+      <div class="card"><div class="stack gap-xs">
+        <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase">Verbraucherpreise</p>
+        <p class="big" style="font-size:2.6rem;color:var(--oxide)">×4,4</p>
+        <p class="small">Was 1970 einen Euro kostete, kostet heute 4,43 €. Wer 2 % Zinsen bekommt und 2,7 % Inflation hat, verliert.</p>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ RÜCKBLICK ══════════════════ -->
+<section class="band" id="rueckblick">
+  <div class="wrap stack gap-l">
+
+    <div class="stack gap-s rv" style="max-width:62ch">
+      <p class="eyebrow">Der Rückblick</p>
+      <h2>Was wäre gewesen, wenn?</h2>
+      <p class="lede">Stellen Sie ein, wie viel Aktien Sie im Depot haben wollen, und ziehen Sie die
+        Regler auf einen beliebigen Zeitraum. Sie sehen sofort, was daraus geworden wäre — und welche
+        unserer acht Anlagestrategien genau diese Gewichtung fährt.</p>
+    </div>
+
+    <div class="tool rv">
+      <div class="tool-head">
+        <p class="label">Indexhistorie 1970 – 2026</p>
+        <p class="label" id="rbRangeLabel" style="color:var(--teal-text)">1990 – 2026 · 75 % Aktien</p>
+      </div>
+      <div class="tool-body">
+
+        <form class="stack gap-m" id="rbForm" onsubmit="return false">
+          <fieldset class="stack gap-s">
+            <legend class="field-label" style="margin-bottom:4px">Gewichtung
+              <span class="field-val" id="rbQuoteVal">75 % Aktien · 25 % Renten</span></legend>
+            <input type="range" id="rbQuote" min="0" max="100" step="1" value="75" aria-label="Aktienquote">
+            <div class="dual-scale"><span>nur Renten</span><span>nur Aktien</span></div>
+            <div class="chips" role="group" aria-label="Gewichtung wählen">
+              <button type="button" class="chip" data-q="20">Sicherheitsorientiert</button>
+              <button type="button" class="chip" data-q="50">Ausgewogen</button>
+              <button type="button" class="chip" data-q="75" aria-pressed="true">Wachstum</button>
+              <button type="button" class="chip" data-q="100">Voll investiert</button>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <span class="field-label">Zeitraum <span class="field-val" id="rbYears">36 Jahre</span></span>
+            <div class="dual" id="rbDual">
+              <div class="track"></div><div class="fill" id="rbFill"></div>
+              <input type="range" id="rbFrom" min="1970" max="2025" step="1" value="1990" aria-label="Startjahr">
+              <input type="range" id="rbTo"   min="1971" max="2026" step="1" value="2026" aria-label="Endjahr">
+            </div>
+            <div class="dual-scale"><span>1970</span><span>1985</span><span>2000</span><span>2015</span><span>2026</span></div>
+          </div>
+
+          <div class="chips" role="group" aria-label="Zeitraum-Vorlagen">
+            <button type="button" class="chip" data-span="1970,2026">Seit 1970</button>
+            <button type="button" class="chip" data-span="1990,2026" aria-pressed="true">1990 – heute</button>
+            <button type="button" class="chip" data-span="2000,2020">2000 – 2020</button>
+            <button type="button" class="chip" data-span="2006,2026">Letzte 20 Jahre</button>
+          </div>
+
+          <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:12px">
+            <div class="field">
+              <span class="field-label">Einmalanlage</span>
+              <div class="inp"><input type="number" id="rbEinmal" value="10000" min="0" step="500" inputmode="numeric"><span class="unit">€</span></div>
+            </div>
+            <div class="field">
+              <span class="field-label">Sparplan</span>
+              <div class="inp"><input type="number" id="rbRate" value="100" min="0" step="25" inputmode="numeric"><span class="unit">€ / Mon.</span></div>
+            </div>
+          </div>
+
+          <div class="card card--soft" style="padding:16px 18px">
+            <div class="stack gap-xs">
+              <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-text)">In diesem Zeitraum</p>
+              <p class="big" id="rbFactor" style="font-size:2.2rem;color:var(--teal-text)">×14,2</p>
+              <p class="small" id="rbFactorNote">hat sich diese Gewichtung vervielfacht.</p>
+            </div>
+          </div>
+        </form>
+
+        <div class="stack gap-m" style="min-width:0">
+
+          <div class="chartbox chartbox--lead">
+            <canvas id="chartHistory" height="300" aria-label="Wertentwicklung der gewählten Aktien-Renten-Gewichtung im Vergleich zum Tagesgeld"></canvas>
+            <div class="legend">
+              <span><i id="legPfSwatch" style="background:#12857A"></i><span id="legPfName">Ihre Gewichtung</span></span>
+              <span><i style="background:#C6D0E0"></i><span id="legBand">Bandbreite 0 – 100 % Aktien</span></span>
+              <span><i style="background:#7A88A3"></i>Tagesgeld</span>
+              <span><i style="background:#A6402A"></i>Verbraucherpreise</span>
+            </div>
+          </div>
+
+          <div class="grid g2t" style="gap:12px">
+            <dl class="result">
+              <dt>Einmalanlage · <span id="rbOutYearA">1990</span></dt>
+              <dd id="rbOutEinmal">—</dd>
+              <p class="note" id="rbOutEinmalNote">—</p>
+            </dl>
+            <dl class="result">
+              <dt>Sparplan · monatlich</dt>
+              <dd id="rbOutSpar">—</dd>
+              <p class="note" id="rbOutSparNote">—</p>
+              <p class="note" id="rbTg" style="border-top:1px solid rgba(255,255,255,.14);padding-top:8px;margin-top:2px">—</p>
+            </dl>
+          </div>
+
+          <dl class="stats">
+            <div class="stat"><dt>Rendite p. a. im Zeitraum</dt><dd id="rbPa">—</dd></div>
+            <div class="stat"><dt>Bestes Jahr</dt><dd class="pos" id="rbBest">—</dd></div>
+            <div class="stat"><dt>Schwächstes Jahr</dt><dd class="neg" id="rbWorst">—</dd></div>
+            <div class="stat"><dt>Schwankung p. a.</dt><dd id="rbVola">—</dd></div>
+          </dl>
+
+          <div class="card" style="padding:18px 20px">
+            <div class="stack gap-s">
+              <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-text)">
+                Welche Anlagestrategie fährt diese Gewichtung?</p>
+              <div class="lad" id="rbLadder"></div>
+              <p class="mini" id="rbLadderNote">—</p>
+            </div>
+          </div>
+
+          <button class="btn btn--line btn--sm" type="button" id="rbTransfer" style="align-self:flex-start">
+            Diese Rendite in den Sparplanrechner übernehmen
+          </button>
+
+          <p class="mini">Modellrechnung auf Basis echter Indexjahresrenditen in Euro: Der Aktienteil besteht
+            aus 90 % Weltaktien und 10 % Schwellenländern, der Rententeil aus Euro-Anleihen, jährlich
+            zurückgewichtet. Die Zuordnung der Strategien erfolgt über ihre heutige Aktienquote laut
+            Produktinformationsblatt — die tatsächliche Quote schwankt nach Marktlage. Es handelt sich
+            deshalb nicht um die Wertentwicklung der tatsächlichen Musterportfolios; diese finden Sie
+            weiter unten bei den Strategien.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="small rv" style="max-width:74ch">Wer am Höchststand alles auf einmal anlegte, brauchte Geduld.
+      Wer monatlich kaufte, profitierte genau von den schwachen Jahren — er bekam für dieselbe Rate
+      mehr Anteile. Genau das ist der Cost-Average-Effekt, und genau deshalb ist der Sparplan
+      der ruhigere Weg.</p>
+
+  </div>
+</section>
+<!-- ══════════════════ SPARPLAN ══════════════════ -->
+<section class="band band--w" id="sparplan">
+  <div class="wrap stack gap-l">
+
+    <div class="stack gap-s rv" style="max-width:62ch">
+      <p class="eyebrow">Ihr Sparplan</p>
+      <h2>Und wenn Sie heute anfangen?</h2>
+      <p class="lede">Alle Kosten der Vermögensverwaltung sind eingerechnet — und ebenso alles,
+        was zurückkommt: der Entgeltrabatt ab 25.000 € Depotwert und die Repartierung in den
+        letzten fünf Jahren, mit der Ihre Einrichtungskosten wieder ins Depot fließen.</p>
+    </div>
+
+    <div class="tool rv">
+      <div class="tool-head">
+        <p class="label">Sparplanrechner</p>
+        <p class="label" id="zkAssump" style="color:var(--teal-text)">6,0 % p. a. angenommen</p>
+      </div>
+      <div class="tool-body">
+
+        <form class="stack gap-m" id="zkForm" onsubmit="return false">
+          <fieldset class="stack gap-s">
+            <legend class="field-label" style="margin-bottom:4px">Anlagestrategie</legend>
+            <div class="pf" id="zkPf" role="group" aria-label="Anlagestrategie wählen"></div>
+          </fieldset>
+
+          <div class="field">
+            <span class="field-label">Monatliche Rate</span>
+            <div class="inp"><input type="number" id="zkRate" value="200" min="0" step="25" inputmode="numeric"><span class="unit">€ / Monat</span></div>
+            <p class="hint" id="zkRateHint">Ab 50 € monatlich, für Minderjährige ab 25 €.</p>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Einmalanlage zum Start</span>
+            <div class="inp"><input type="number" id="zkEinmal" value="0" min="0" step="500" inputmode="numeric"><span class="unit">€</span></div>
+            <p class="hint">Einmalanlagen sind ab 2.500 € möglich, jederzeit auch zusätzlich.</p>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Laufzeit <span class="field-val" id="zkJahreVal">30 Jahre</span></span>
+            <input type="range" id="zkJahre" min="5" max="45" step="1" value="30" aria-label="Laufzeit in Jahren">
+          </div>
+
+          <fieldset class="stack gap-s">
+            <legend class="field-label" style="margin-bottom:4px">Kostenfreie Dynamik</legend>
+            <div class="chips" role="group" aria-label="Jährliche Beitragserhöhung">
+              <button type="button" class="chip" data-dyn="0" aria-pressed="true">ohne</button>
+              <button type="button" class="chip" data-dyn="3">3 % im Jahr</button>
+              <button type="button" class="chip" data-dyn="5">5 % im Jahr</button>
+            </div>
+            <p class="mini">Die Erhöhungen lösen kein weiteres Einrichtungsentgelt aus — anders als
+              bei den meisten Anlageprodukten.</p>
+          </fieldset>
+
+          <div class="field">
+            <span class="field-label">Wertentwicklung p. a. <span class="field-val" id="zkRenditeVal">6,0 %</span></span>
+            <input type="range" id="zkRendite" min="0" max="12" step="0.1" value="6" aria-label="Angenommene Wertentwicklung pro Jahr">
+          </div>
+
+          <div class="chips" role="group" aria-label="Renditeannahmen">
+            <button type="button" class="chip" data-rend="4">4 %</button>
+            <button type="button" class="chip" data-rend="6" aria-pressed="true">6 %</button>
+            <button type="button" class="chip" data-rend="8">8 %</button>
+            <button type="button" class="chip" id="zkOff" data-rend="7">Vorschlag</button>
+          </div>
+          <p class="mini" id="zkRenditeHint">—</p>
+        </form>
+
+        <div class="stack gap-m" style="min-width:0">
+
+          <dl class="result">
+            <dt>Depotwert nach <span id="zkOutJahre">30</span> Jahren</dt>
+            <dd id="zkOutWert">—</dd>
+            <p class="note" id="zkOutNote">—</p>
+          </dl>
+
+          <dl class="stats">
+            <div class="stat"><dt>Eingezahlt</dt><dd id="zkEin">—</dd></div>
+            <div class="stat"><dt>Wertzuwachs</dt><dd class="pos" id="zkPlus">—</dd></div>
+            <div class="stat"><dt>Vorteil am Laufzeitende</dt><dd class="pos" id="zkBonus">—</dd></div>
+            <div class="stat"><dt>Monatlich entnehmbar</dt><dd id="zkEntn">—</dd></div>
+          </dl>
+
+          <div class="chartbox">
+            <canvas id="chartFuture" height="320" aria-label="Entwicklung von Einzahlungen und Depotwert über die Laufzeit"></canvas>
+            <div class="legend">
+              <span><i id="legZkSwatch" style="background:#12857A"></i>Depotwert</span>
+              <span><i style="background:#2E6B47"></i>Ihr Vorteil aus Rabatt und Repartierung</span>
+              <span><i style="background:#7A88A3"></i>Ihre Einzahlungen</span>
+            </div>
+          </div>
+
+          <div class="boon">
+            <div class="boon-head">
+              <p>Was Sie zurückbekommen und sparen</p>
+              <span id="zkVorteilSum">—</span>
+            </div>
+            <div id="zkVorteil"></div>
+          </div>
+
+          <p class="mini" id="zkFoot">—</p>
+
+          <div class="doc">
+            <div class="doc-grid">
+              <div class="field">
+                <span class="field-label">Für</span>
+                <div class="inp"><input type="text" id="docName" placeholder="Name der Kundin oder des Kunden" autocomplete="off"></div>
+              </div>
+              <div class="field">
+                <span class="field-label">Ansprechpartner</span>
+                <div class="inp"><input type="text" id="docBerater" placeholder="Ihr Name" autocomplete="off"></div>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn--navy btn--sm" type="button" id="pdfZk">Prognose als PDF</button>
+              <button class="btn btn--line btn--sm" type="button" id="linkZk">Berechnung als Link sichern</button>
+            </div>
+            <p class="mini" id="linkMsg">Das PDF entsteht über den Druckdialog Ihres Browsers — dort
+              „Als PDF sichern“ wählen. Der Link speichert alle Eingaben und öffnet den Rechner
+              genau so wieder.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mini rv" style="max-width:80ch">Modellrechnung, keine Zusage. Die angenommene Wertentwicklung
+      ist eine Rechengröße, die Sie selbst wählen — aus der Vergangenheit lässt sich die Zukunft nicht ableiten.</p>
+
+  </div>
+</section>
+
+<!-- ══════════════════ ANLAGEZIEL ══════════════════ -->
+<section class="band" id="ziel">
+  <div class="wrap stack gap-l">
+
+    <div class="stack gap-s rv" style="max-width:62ch">
+      <p class="eyebrow">Ihr Anlageziel</p>
+      <h2>Vom Ziel her gerechnet.</h2>
+      <p class="lede">Sie wissen, was Sie erreichen wollen. Hier steht, welche Rate dafür nötig ist —
+        und was das Ergebnis Ihnen später Monat für Monat auszahlen kann.</p>
+    </div>
+
+    <div class="tool rv">
+      <div class="tool-head">
+        <p class="label">Zielrechner</p>
+        <p class="label" id="zlHead" style="color:var(--teal-text)">250.000 € in 30 Jahren</p>
+      </div>
+      <div class="tool-body">
+
+        <form class="stack gap-m" id="zlForm" onsubmit="return false">
+          <fieldset class="stack gap-s">
+            <legend class="field-label" style="margin-bottom:4px">Wofür sparen Sie?</legend>
+            <div class="chips" role="group" aria-label="Anlageziel wählen">
+              <button type="button" class="chip" data-ziel="250000,30" aria-pressed="true">Ruhestand</button>
+              <button type="button" class="chip" data-ziel="500000,25">Finanzielle Freiheit</button>
+              <button type="button" class="chip" data-ziel="60000,18">Zukunft der Kinder</button>
+              <button type="button" class="chip" data-ziel="40000,10">Wohnung einrichten</button>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <span class="field-label">Zielbetrag</span>
+            <div class="inp"><input type="number" id="zlZiel" value="250000" min="1000" step="5000" inputmode="numeric"><span class="unit">€</span></div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">In <span class="field-val" id="zlJahreVal">30 Jahren</span></span>
+            <input type="range" id="zlJahre" min="5" max="45" step="1" value="30" aria-label="Zeitraum bis zum Ziel">
+          </div>
+
+          <div class="field">
+            <span class="field-label">Einmalanlage zum Start</span>
+            <div class="inp"><input type="number" id="zlEinmal" value="0" min="0" step="500" inputmode="numeric"><span class="unit">€</span></div>
+          </div>
+
+          <fieldset class="stack gap-s">
+            <legend class="field-label" style="margin-bottom:4px">Kostenfreie Dynamik</legend>
+            <div class="chips" role="group" aria-label="Jährliche Beitragserhöhung">
+              <button type="button" class="chip" data-zldyn="0" aria-pressed="true">ohne</button>
+              <button type="button" class="chip" data-zldyn="3">3 % im Jahr</button>
+              <button type="button" class="chip" data-zldyn="5">5 % im Jahr</button>
+            </div>
+            <p class="mini">Mit Dynamik starten Sie niedriger und erhöhen jedes Jahr — ohne
+              zusätzliches Einrichtungsentgelt.</p>
+          </fieldset>
+
+          <div class="field">
+            <span class="field-label">Wertentwicklung p. a. <span class="field-val" id="zlRenditeVal">6,0 %</span></span>
+            <input type="range" id="zlRendite" min="1" max="12" step="0.1" value="6" aria-label="Angenommene Wertentwicklung pro Jahr">
+            <div class="chips" role="group" aria-label="Renditevorschlag">
+              <button type="button" class="chip" id="zlVorschlag" data-zlrend="6">Vorschlag</button>
+            </div>
+            <p class="mini" id="zlRenditeHint">—</p>
+          </div>
+
+          <fieldset class="stack gap-s">
+            <legend class="field-label" style="margin-bottom:4px">Anlagestrategie</legend>
+            <div class="pf" id="zlPf" role="group" aria-label="Anlagestrategie wählen"></div>
+          </fieldset>
+        </form>
+
+        <div class="stack gap-m" style="min-width:0">
+
+          <dl class="result">
+            <dt>Dafür brauchen Sie monatlich</dt>
+            <dd id="zlRate">—</dd>
+            <p class="note" id="zlNote">—</p>
+          </dl>
+
+          <dl class="stats">
+            <div class="stat"><dt>Summe Ihrer Einzahlungen</dt><dd id="zlEin">—</dd></div>
+            <div class="stat"><dt>Davon Wertzuwachs</dt><dd class="pos" id="zlPlus">—</dd></div>
+            <div class="stat"><dt>Anteil, den der Markt trägt</dt><dd id="zlAnteil">—</dd></div>
+            <div class="stat"><dt>Rabatt &amp; Repartierung</dt><dd class="pos" id="zlBonus">—</dd></div>
+          </dl>
+
+          <div class="card">
+            <div class="stack gap-s">
+              <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-text)">Was Ihr Ziel später abwirft</p>
+              <div class="field">
+                <span class="field-label">Wertentwicklung in der Entnahmephase
+                  <span class="field-val" id="zlEntRendVal">4,0 %</span></span>
+                <input type="range" id="zlEntRend" min="0" max="10" step="0.1" value="4"
+                  aria-label="Angenommene Wertentwicklung während der Entnahme">
+                <p class="mini">Wer entnimmt, legt meist defensiver an als in der Ansparzeit.
+                  Die Entnahme hängt vom erreichten Zielbetrag ab, nicht davon, wie lange Sie dafür gespart haben.</p>
+              </div>
+              <div class="vs">
+                <div class="vsrow">
+                  <div class="vshead">
+                    <b>Monatlich entnehmen, ohne das Kapital anzugreifen</b>
+                    <span style="color:var(--teal-text)" id="zlE1">—</span>
+                  </div>
+                  <div class="vsbar"><i id="zlE1Bar" style="width:50%;background:linear-gradient(90deg,#12857A,#17A08D)"></i></div>
+                  <p class="mini">Das Vermögen bleibt erhalten und ist vererbbar.</p>
+                </div>
+                <div class="vsrow">
+                  <div class="vshead">
+                    <b>Monatlich entnehmen, über 20 Jahre aufgebraucht</b>
+                    <span style="color:var(--navy-3)" id="zlE2">—</span>
+                  </div>
+                  <div class="vsbar"><i id="zlE2Bar" style="width:100%;background:#98A5BB"></i></div>
+                  <p class="mini">Höhere Auszahlung, dafür ist das Depot nach 20 Jahren leer.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chartbox">
+            <canvas id="chartZiel" height="300" aria-label="Weg zum Anlageziel"></canvas>
+            <div class="legend">
+              <span><i id="legZlSwatch" style="background:#12857A"></i>Depotwert</span>
+              <span><i style="background:#7A88A3"></i>Ihre Einzahlungen</span>
+              <span><i style="background:#A6402A"></i>Zielbetrag</span>
+            </div>
+          </div>
+
+          <p class="mini" id="zlFoot">—</p>
+
+          <div class="doc">
+            <div class="btn-row">
+              <button class="btn btn--navy btn--sm" type="button" id="pdfZl">Zielprognose als PDF</button>
+            </div>
+            <p class="mini">Nutzt denselben Kopf wie die Sparplanprognose — Name und Ansprechpartner
+              tragen Sie oben im Sparplanrechner ein.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ PORTFOLIOS ══════════════════ -->
+<section class="band band--t" id="portfolios">
+  <div class="wrap stack gap-l">
+
+    <div class="stack gap-s rv" style="max-width:62ch">
+      <p class="eyebrow">Die Anlagestrategien</p>
+      <h2>Acht Wege, ein Prinzip.</h2>
+      <p class="lede">Jede Strategie investiert ausschließlich in zum Vertrieb zugelassene offene
+        Investmentfonds — ausgewählt aus über 10.000 Fonds in mehr als 60 Kategorien und
+        laufend überwacht. Was sich unterscheidet, ist vor allem die Aktienquote — von 10 %
+        bei Protect 10 bis 100 % bei Index Chance.</p>
+    </div>
+
+    <div class="grid g4 rv" id="pcards"></div>
+
+    <p class="mini rv" style="max-width:88ch">Wertentwicklung und Volatilität laut Produktinformationsblatt,
+      Stand 31.07.2026, berechnet auf Basis der veröffentlichten Zielfondspreise. Provisionen, Gebühren
+      und Entgelte sind darin nicht berücksichtigt. Die Portfoliozusammensetzung ist eine
+      Stichtagsbetrachtung und kann sich täglich ändern.</p>
+
+  </div>
+</section>
+
+<!-- ══════════════════ FLEXIBILITÄT ══════════════════ -->
+<section class="band band--w" id="flexibel">
+  <div class="wrap stack gap-l">
+
+    <div class="stack gap-s rv" style="max-width:60ch">
+      <p class="eyebrow">So flexibel wie das Leben</p>
+      <h2>Ein Depot, das sich anpasst.<br>Nicht umgekehrt.</h2>
+      <p class="lede">Gehaltserhöhung, Beitragspause, Erbschaft, Autokauf — Ihr ZielsparKonto
+        macht mit, ohne dass Sie es kündigen müssen.</p>
+    </div>
+
+    <div class="grid g2 rv">
+      <div class="card feat">
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M4 22V12M11 22V7M18 22v-8M25 22V10" stroke-linecap="round"/><path d="M3 27h26" stroke-linecap="round"/>
+        </svg>
+        <h3>Zuzahlen und pausieren</h3>
+        <p>Neben der monatlichen Rate sind Einmalzahlungen jederzeit möglich. Genauso können Sie
+          die Beiträge aussetzen, wenn es gerade nicht passt.</p>
+      </div>
+      <div class="card feat">
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M6 11h20M6 21h20" stroke-linecap="round"/><path d="m21 6 5 5-5 5M11 16l-5 5 5 5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Strategie wechseln</h3>
+        <p>Sie können jederzeit in eine andere Anlagestrategie umziehen — etwa defensiver werden,
+          wenn das Ziel näher rückt.</p>
+      </div>
+      <div class="card feat">
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <rect x="4" y="8" width="24" height="17" rx="2.5"/><path d="M4 14h24" /><path d="M9 4v5M23 4v5" stroke-linecap="round"/>
+        </svg>
+        <h3>Börsentäglich verfügbar</h3>
+        <p>Kein Kündigungstermin, keine Mindestlaufzeit. Sie entnehmen einen Betrag oder
+          richten regelmäßige Entnahmen ein.</p>
+      </div>
+      <div class="card feat">
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M16 3.5 27 8v8.5c0 6.4-4.5 10.8-11 12.5-6.5-1.7-11-6.1-11-12.5V8Z" stroke-linejoin="round"/>
+          <path d="m11.5 16.2 3.2 3.3 6-6.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Sondervermögen</h3>
+        <p>Ihre Fondsanteile sind Sondervermögen und werden von einer Depotstelle verwahrt.
+          Bei einer Insolvenz fallen sie nicht in die Konkursmasse.</p>
+      </div>
+      <div class="card feat">
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M6 26V9.5l10-4.5 10 4.5V26" stroke-linejoin="round"/><path d="M3.5 26h25" stroke-linecap="round"/>
+          <path d="M12 26v-7h8v7" stroke-linejoin="round"/>
+        </svg>
+        <h3>Vererbbar</h3>
+        <p>Im Todesfall wird das vorhandene Kapital dem Nachlass zugerechnet. Bei Rentenversicherungen
+          ist das oft nicht selbstverständlich.</p>
+      </div>
+      <div class="card feat">
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M5 20c4-9 8-9 11-4.5S23 22 27 12" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 26h22" stroke-linecap="round"/>
+        </svg>
+        <h3>Ablaufmanagement</h3>
+        <p>Kostenfrei: Zum Ende der Anlagephase wird schrittweise in defensivere Strategien
+          umgeschichtet, damit ein Kursrutsch kurz vor dem Ziel nicht alles trifft.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ TREUEBONUS ══════════════════ -->
+<section class="band" id="treuebonus">
+  <div class="wrap stack gap-l">
+
+    <div class="grid g2 rv" style="gap:clamp(24px,4vw,52px);align-items:center">
+      <div class="stack gap-s">
+        <p class="eyebrow">Entgeltrabatt und Repartierung</p>
+        <h2>Am Ende kommt zurück,<br>was am Anfang stand.</h2>
+        <p class="lede">Zweimal bekommen Sie Geld zurück: Das laufende Verwaltungsentgelt sinkt
+          automatisch, sobald Ihr Depotwert bestimmte Stufen überschreitet. Und in den letzten fünf
+          Jahren wird es Ihnen gutgeschrieben, bis Ihre einmaligen Einrichtungskosten wieder im
+          Depot sind.</p>
+      </div>
+      <div class="card card--navy">
+        <div class="stack gap-s">
+          <p class="mini" style="font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#17A08D">Rabattstaffel auf das Verwaltungsentgelt</p>
+          <div class="stack gap-xs" id="staffel"></div>
+          <p class="small">Maßgeblich sind die Bedingungen zum Vermögensverwaltungsvertrag.
+            Der Rabatt ist in allen Berechnungen auf dieser Seite bereits berücksichtigt.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline rv" role="list">
+      <div class="tl on" role="listitem"><p class="tl-y">Am Anfang</p><h3>Einrichtung</h3>
+        <p>Die einmaligen Kosten der Vermögensverwaltung werden aus den ersten Beiträgen getilgt.</p></div>
+      <div class="tl on" role="listitem"><p class="tl-y">Danach</p><h3>Voll investiert</h3>
+        <p>Ab dann fließt jeder Euro Ihrer Rate vollständig in Ihre Anlagestrategie.</p></div>
+      <div class="tl on" role="listitem"><p class="tl-y">Mit wachsendem Depot</p><h3>Rabatt greift</h3>
+        <p>Ab 25.000 € Depotwert sinkt das Verwaltungsentgelt stufenweise, bis zu 30 %.</p></div>
+      <div class="tl on" role="listitem"><p class="tl-y">Letzte fünf Jahre</p><h3>Alles zurück</h3>
+        <p>Das laufende Verwaltungsentgelt wird gutgeschrieben, bis Ihre Einrichtungskosten
+          wieder im Depot sind. Ab zehn Jahren Anlagedauer.</p></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ ABLAUF ══════════════════ -->
+<section class="band band--w" id="ablauf">
+  <div class="wrap stack gap-m">
+    <div class="stack gap-s rv" style="max-width:56ch">
+      <p class="eyebrow">In wenigen Schritten</p>
+      <h2>So kommen Sie zu Ihrem Depot.</h2>
+    </div>
+    <div class="steps rv">
+      <div class="step"><h3>Ziel und Anlagehorizont klären</h3>
+        <p>Wofür sparen Sie, wie lange haben Sie Zeit, wie viel Schwankung tragen Sie mit?</p></div>
+      <div class="step"><h3>Anlagestrategie wählen</h3>
+        <p>Von Protect 20 mit Schutzschwelle bis Index Chance mit voller Aktienquote.</p></div>
+      <div class="step"><h3>Vermögensverwaltungsvertrag abschließen</h3>
+        <p>Baumann &amp; Partners führt für Sie ein separates Anlagedepot in Luxemburg.</p></div>
+      <div class="step"><h3>Anlegen und laufen lassen</h3>
+        <p>Fondsauswahl, Überwachung und Umschichtung übernimmt das Investmentteam.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ ABSCHLUSS ══════════════════ -->
+<section class="band band--navy" id="antrag">
+  <div class="wrap stack gap-m center">
+    <h2>Rechnen Sie nach.<br>Dann entscheiden Sie.</h2>
+    <p class="lede" style="text-align:center">Ab 50 € im Monat, für Minderjährige ab 25 €.
+      Monatlich, einmalig oder beides — und jederzeit anpassbar.</p>
+    <div class="btn-row" style="justify-content:center">
+      <a class="btn btn--teal" href="https://intranet.invgate.de/Account/Login" target="_blank" rel="noopener">Zum Antrag</a>
+      <a class="btn btn--line" href="#sparplan" style="color:#FFF;border-color:rgba(255,255,255,.34)">Noch einmal rechnen</a>
+    </div>
+    <p class="mini" style="color:#8FA1C0">Über 50.000 Kundinnen und Kunden, über 1 Mrd. Euro verwaltetes Vermögen.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ DRUCKDOKUMENT ══════════════════ -->
+<div id="print" aria-hidden="true"></div>
+
+<!-- ══════════════════ FUSS ══════════════════ -->
+<footer>
+  <div class="wrap stack gap-l">
+    <div class="cols">
+      <div class="stack gap-s">
+        <h3>Vermittlung</h3>
+        <p>CEB Bankshop AG<br>Stallbaumstraße 11<br>04155 Leipzig</p>
+      </div>
+      <div class="stack gap-s">
+        <h3>Vermögensverwalter</h3>
+        <p>Baumann &amp; Partners S.A.<br>5, Heienhaff<br>L-1736 Senningerberg</p>
+      </div>
+      <div class="stack gap-s">
+        <h3>Aufsicht</h3>
+        <p>Zugelassen von der luxemburgischen Finanzaufsichtsbehörde<br>Am Markt seit 2007</p>
+      </div>
+      <div class="stack gap-s">
+        <h3>Unterlagen</h3>
+        <ul>
+          <li>Produktinformationsblätter der Anlagestrategien</li>
+          <li>Bedingungen zum Vermögensverwaltungsvertrag</li>
+          <li>Werbebroschüre ZielsparKonto</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="disclaimer">Diese Seite dient der Information und ist weder eine Anlageberatung noch eine
+      Anlageempfehlung oder ein Angebot zum Kauf oder Verkauf von Finanzprodukten. Alle Rechenergebnisse
+      sind unverbindliche Modellrechnungen auf Basis der von Ihnen eingegebenen Annahmen. Historische
+      Wertentwicklungen sind kein verlässlicher Indikator für die künftige Entwicklung; die Vermögenswerte
+      unterliegen Kurs-, Zins- und Währungsschwankungen und können auch an Wert verlieren.
+      Datengrundlage des Rückblicks: Weltaktien MSCI World (Gross Total Return, USD), Schwellenländer
+      MSCI Emerging Markets (Gross Total Return, USD, ab 1988), Technologie Nasdaq Composite (ab 1975,
+      zuzüglich pauschal 0,7 Prozentpunkte Dividende), jeweils umgerechnet in Euro über die
+      Jahresendkurse USD/EUR, vor 1999 synthetisch über DM/USD zum Umrechnungskurs von 1,95583 DM je Euro;
+      Anleihen REX-Performanceindex bis 2022, danach Bloomberg Euro Aggregate Bond; Gold Londoner
+      Jahresendfixings; Tagesgeld Deutsche Bundesbank; Verbraucherpreise Statistisches Bundesamt.
+      Die Modellportfolios bilden die strategische Aufteilung der jeweiligen Anlagestrategie ab und
+      werden jährlich zurückgewichtet; sie sind nicht die tatsächliche Wertentwicklung der Musterportfolios
+      und enthalten keine Fondskosten. Die tatsächliche Wertentwicklung der Musterportfolios entnehmen Sie
+      den Produktinformationsblättern, Stand 31.07.2026. In den Zukunftsrechnungen sind die einmaligen
+      Kosten der Vermögensverwaltung, das laufende Verwaltungsentgelt inklusive luxemburgischer
+      Mehrwertsteuer, die kalkulatorische Rückvergütung aus Vertriebsprovisionen der Zielfonds von
+      durchschnittlich 0,4 % des Depotwertes sowie der Entgeltrabatt berücksichtigt; Kosten der Zielfonds
+      sind in der angenommenen Wertentwicklung enthalten. Die einmaligen Kosten sind mit 7,5 % der
+      Beitragssumme ohne Dynamik beziehungsweise 3,0 % einer Einmalanlage angesetzt und werden aus den
+      ersten Beiträgen getilgt. Depotführungsentgelte und steuerliche Effekte sind nicht berücksichtigt;
+      Erträge unterliegen der Abgeltungsteuer, bei Depotführung in Luxemburg ohne Einbehalt durch die
+      depotführende Stelle. Maßgeblich sind ausschließlich die Geschäftsbedingungen, Zusatzvereinbarungen
+      und Sonderbedingungen der Baumann &amp; Partners S.A. sowie die Bedingungen zum
+      Vermögensverwaltungsvertrag. Stand: August 2026.</p>
+  </div>
+</footer>
+<script>
+var Y0=1970,YN=2026;
+var R_WORLD=[-1.98,7.11,20.9,-27.87,-32.59,46.21,3.33,-6.57,3.01,6.52,44.69,11.01,17.7,40.89,22.5,10.71,12.62,-4.91,39.64,11.92,-26.83,21.36,-2.15,36.55,-5.41,12.71,22.71,34.23,16.42,46.13,-5.99,-11.86,-32.38,11.06,6.86,27.03,8.07,-1.97,-36.88,27.0,20.5,-1.91,14.29,21.86,19.84,11.16,11.7,8.06,-3.75,30.87,6.65,32.56,-12.64,20.1,27.2,7.89,10.49];
+var R_EM=[-1.98,7.11,20.9,-27.87,-32.59,46.21,3.33,-6.57,3.01,6.52,44.69,11.01,17.7,40.89,22.5,10.71,12.62,-4.91,58.21,57.55,-21.6,63.13,14.33,93.89,-16.96,-11.94,14.13,2.1,-30.35,94.01,-25.08,3.08,-21.0,29.76,16.79,55.34,18.73,25.09,-50.48,73.84,27.85,-15.49,16.34,-6.5,11.52,-4.76,15.26,20.95,-10.09,21.17,8.66,5.94,-14.77,6.44,15.31,19.21,20.24];
+var R_RENT=[5.47,8.54,4.07,3.29,8.23,13.49,11.14,13.56,3.74,0.51,3.1,5.07,18.57,4.91,13.19,10.26,8.62,6.81,4.66,1.89,1.41,11.17,13.41,14.66,-2.51,16.69,7.55,6.56,11.24,-1.95,6.86,5.62,9.02,4.09,6.7,4.08,0.27,2.51,10.14,4.92,4.01,8.29,4.64,-0.49,7.1,0.51,2.33,-0.95,1.46,1.14,1.22,-1.69,-11.87,7.19,2.63,1.25,-0.19];
+var R_TG=[8.65,6.16,4.3,10.18,8.87,4.4,3.89,4.14,3.36,5.87,9.06,11.26,8.67,5.36,5.55,5.19,4.57,3.72,4.01,6.59,7.92,8.84,9.42,7.49,5.35,4.5,3.27,3.22,3.45,2.74,4.12,4.38,3.28,2.32,2.05,2.09,2.84,3.86,3.86,0.72,0.44,0.87,0.23,0.09,0.1,-0.11,-0.32,-0.36,-0.36,-0.39,-0.55,-0.57,-0.01,3.21,3.64,2.18,2.17];
+var R_INF=[3.45,5.24,5.48,7.03,6.99,5.91,4.25,3.73,2.72,4.04,5.4,6.3,5.3,3.3,2.4,2.1,-0.1,0.2,1.3,2.8,2.7,3.5,5.0,4.5,2.7,1.9,1.4,1.9,0.8,0.7,1.3,2.0,1.4,1.0,1.6,1.6,1.6,2.3,2.6,0.3,1.0,2.2,1.9,1.5,1.0,0.5,0.5,1.5,1.8,1.4,0.5,3.1,6.9,5.9,2.2,2.2,2.5];
+(function () {
+'use strict';
+
+/* ═══════════════ 2. ANLAGESTRATEGIEN ═══════════════
+   aktien = heutige Aktienquote laut Produktinformationsblatt (Stichtag 31.07.2026).
+   Nach dieser Quote werden die Strategien der Gewichtung im Rückblick zugeordnet.
+   lang  = Indexmodell dieser Quote seit 1970, abzüglich der Kosten der Zielfonds. */
+
+var PORTS = [
+  { k:'protect10', name:'Portfolio Protect 10', kurz:'Protect 10', aktien:10,
+    entgelt:1.521, fonds:0.9, lang:4.9, seit:'01.01.1996', offPa:5.6, offVola:6.1, j1:5.0,
+    horizont:'ab 10 Jahren',
+    stich:'69 % Rentenfonds EUR · 10 % Aktienfonds International · 8 % Renten Emerging Markets · 6 % Unternehmensanleihen',
+    text:'Schutzschwelle 10 %: Ein Absinken um mehr als 10 % unter den erreichten Höchststand soll verhindert werden. Keine Garantie.' },
+  { k:'protect20', name:'Portfolio Protect 20', kurz:'Protect 20', aktien:20,
+    entgelt:1.697, fonds:1.0, lang:5.3, seit:'01.01.1996', offPa:6.8, offVola:9.1, j1:7.3,
+    horizont:'ab 10 Jahren',
+    stich:'60,5 % Rentenfonds EUR · 19,5 % Aktienfonds International · 5 % Rohstofffonds · 4 % Renten Emerging Markets',
+    text:'Schutzschwelle 20 %: Mehr Spielraum nach oben als Protect 10, dafür größere Schwankungen. Keine Garantie.' },
+  { k:'esg', name:'Portfolio Nachhaltigkeit', kurz:'Nachhaltigkeit', aktien:39,
+    entgelt:1.521, fonds:1.1, lang:6.1, seit:'31.12.2017', offPa:4.7, offVola:10.3, j1:7.7,
+    horizont:'ab 10 Jahren',
+    stich:'51 % Rentenfonds internationale Währungen · 23 % Aktienfonds Ökologie · 16 % Aktienfonds International und Europa · 10 % Wandelanleihen',
+    text:'Legt den Schwerpunkt auf ökologische und soziale Merkmale — mit deutlichem Rentenanker.' },
+  { k:'balance', name:'Portfolio Balance', kurz:'Balance', aktien:66,
+    entgelt:1.697, fonds:1.0, lang:7.2, seit:'31.12.2013', offPa:7.0, offVola:9.9, j1:6.2,
+    horizont:'ab 10 Jahren',
+    stich:'41 % Aktienfonds International · 40 % Mischfonds Welt · 14 % Rentenfonds · 5 % Asien-Pazifik',
+    text:'Einkommensorientiert in allen Anlageklassen, gewichtet Märkte mit höherem Ertragspotential stärker.' },
+  { k:'control', name:'Portfolio Index Control', kurz:'Index Control', aktien:68,
+    entgelt:0.936, fonds:0.35, lang:7.9, seit:'01.05.2017', offPa:4.9, offVola:7.9, j1:14.5,
+    horizont:'ab 10 Jahren',
+    stich:'48 % Aktienfonds International · 32 % Rentenfonds EUR · 15 % Europa · 5 % Emerging Markets',
+    text:'Indexorientierte Zielfonds mit festem Rentenanker — das günstigste Verwaltungsentgelt aller acht Strategien.' },
+  { k:'trend', name:'Portfolio Trend Invest', kurz:'Trend Invest', aktien:87,
+    entgelt:1.872, fonds:1.4, lang:7.4, seit:'01.04.2020', offPa:7.4, offVola:14.8, j1:7.1,
+    horizont:'ab 15 Jahren',
+    stich:'34 % Aktienfonds International · 18 % Technologie · 15 % Ökologie · 10 % Pharma · 10 % Branchen und Themen · 8 % Rohstoffe',
+    text:'Setzt gezielt auf Themen mit Trenddynamik — Technologie, Nachhaltigkeit, Gesundheit, Rohstoffe.' },
+  { k:'dynamic', name:'Portfolio Dynamic', kurz:'Dynamic', aktien:95,
+    entgelt:1.872, fonds:1.3, lang:7.6, seit:'31.12.2013', offPa:8.2, offVola:13.4, j1:8.7,
+    horizont:'ab 15 Jahren',
+    stich:'34 % Technologie · 39 % Aktienfonds International · 10 % Europa · 12 % Indien und Gesundheit',
+    text:'Global, breit gestreut und gewinnorientiert. Marktbereiche mit der höchsten Dynamik werden stärker gewichtet.' },
+  { k:'chance', name:'Portfolio Index Chance', kurz:'Index Chance', aktien:100,
+    entgelt:1.170, fonds:0.3, lang:8.7, seit:'31.10.2023', offPa:16.2, offVola:11.2, j1:20.1,
+    horizont:'ab 15 Jahren',
+    warn:'Erst seit Ende 2023 am Markt — für Langfristannahmen wenig aussagekräftig.',
+    stich:'80 % Aktienfonds International · 15 % Europa · 5 % Emerging Markets',
+    text:'Nutzt indexorientierte Zielfonds und spiegelt die Marktentwicklung bei voller Aktienquote.' }
+];
+function port(k) { for (var i = 0; i < PORTS.length; i++) if (PORTS[i].k === k) return PORTS[i]; return PORTS[3]; }
+
+var MATCH = 8;   /* Toleranz in Prozentpunkten für „fährt diese Gewichtung" */
+
+/* Kostenparameter — aus dem offiziellen Angebot zurückgerechnet */
+var FEE_EEG_RATE = 0.075;   /* der Beitragssumme ohne Dynamik  */
+var FEE_EEG_EINM = 0.030;   /* einer Einmalanlage              */
+var TILGUNG      = 0.90;    /* Anteil der Rate, der die Einrichtung tilgt */
+var RUECK        = 0.004;   /* kalkulatorische Rückvergütung p. a.        */
+var REPA_MON     = 60;      /* Repartierung: letzte fünf Jahre der Anlagedauer  */
+var REPA_MIN     = 10;      /* erst ab zehn Jahren Anlagedauer                   */
+var REPA_SATZ    = 0.004;   /* 0,4 Prozentpunkte weniger Verwaltungsentgelt p. a. */
+var STAFFEL = [[200000,.30],[150000,.25],[100000,.20],[75000,.15],[50000,.10],[25000,.05],[0,0]];
+function rabatt(v) { for (var i = 0; i < STAFFEL.length; i++) if (v >= STAFFEL[i][0]) return STAFFEL[i][1]; return 0; }
+
+var N = R_WORLD.length;
+function ix(y) { return Math.max(0, Math.min(N - 1, y - Y0)); }
+
+/* Jahresrenditen einer Aktien-/Renten-Gewichtung.
+   Aktienteil: 90 % Weltaktien, 10 % Schwellenländer. Jährlich zurückgewichtet. */
+var mixCache = {};
+function mixq(q) {
+  var key = Math.round(q * 1000);
+  if (mixCache[key]) return mixCache[key];
+  var out = [], i;
+  for (i = 0; i < N; i++) out.push(q * (0.90 * R_WORLD[i] + 0.10 * R_EM[i]) + (1 - q) * R_RENT[i]);
+  mixCache[key] = out;
+  return out;
+}
+
+/* Farbverlauf der Risikoleiter: Blau → Petrol → Terrakotta */
+function ramp(q) {
+  var a, b, t;
+  if (q <= 0.5) { a = [62, 110, 156]; b = [18, 133, 122]; t = q / 0.5; }
+  else { a = [18, 133, 122]; b = [176, 82, 58]; t = (q - 0.5) / 0.5; }
+  var c = a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); });
+  return '#' + c.map(function (v) { return ('0' + v.toString(16)).slice(-2); }).join('');
+}
+function hex2rgba(h, a) {
+  var n = parseInt(h.slice(1), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+
+/* ═══════════════ 3. FORMATE ═══════════════ */
+var nf0 = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
+function eur(v) { return nf0.format(Math.round(v)) + ' €'; }
+function eurK(v) {
+  if (Math.abs(v) >= 1000000) return (v / 1000000).toLocaleString('de-DE', { maximumFractionDigits: 2 }) + ' Mio. €';
+  return nf0.format(Math.round(v)) + ' €';
+}
+function pct(v, d) { d = d == null ? 1 : d; return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d }) + ' %'; }
+function fak(v) { return '×' + v.toLocaleString('de-DE', { maximumFractionDigits: v < 10 ? 1 : 0 }); }
+function axis(maxV, want) {
+  if (!(maxV > 0)) return { step: 1, top: 1, ticks: 1 };
+  var raw = maxV / want, e = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / e, step;
+  step = (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * e;
+  var top = Math.ceil(maxV / step) * step;
+  return { step: step, top: top, ticks: Math.round(top / step) };
+}
+function yearStep(span, pxWidth) {
+  var maxLabels = Math.max(2, Math.floor(pxWidth / 54));
+  var cand = [1, 2, 5, 10, 20, 25, 50];
+  for (var i = 0; i < cand.length; i++) if (span / cand[i] <= maxLabels) return cand[i];
+  return 50;
+}
+
+/* ═══════════════ 4. RECHENKERN ═══════════════ */
+function grow(s, a, b) {
+  var v = 1, y;
+  for (y = a + 1; y <= b; y++) v *= (1 + s[ix(y)] / 100);
+  return v;
+}
+function cagr(f, yrs) { return yrs <= 0 || f <= 0 ? 0 : Math.pow(f, 1 / yrs) - 1; }
+
+function sparplan(s, a, b, rate) {
+  var v = 0, y, m, rm;
+  for (y = a + 1; y <= b; y++) {
+    rm = Math.pow(1 + s[ix(y)] / 100, 1 / 12);
+    for (m = 0; m < 12; m++) v = (v + rate) * rm;
+  }
+  return v;
+}
+function irr(rate, months, final) {
+  if (rate <= 0 || months <= 0 || final <= 0) return 0;
+  var lo = -0.95, hi = 2.0, k, mid, mm, v, i;
+  for (k = 0; k < 100; k++) {
+    mid = (lo + hi) / 2;
+    mm = Math.pow(1 + mid, 1 / 12) - 1;
+    v = 0;
+    for (i = 0; i < months; i++) v = (v + rate) * (1 + mm);
+    if (v > final) hi = mid; else lo = mid;
+  }
+  return (lo + hi) / 2;
+}
+/* Rollierende Sparplan-Renditen: alle Zeitfenster dieser Länge seit 1970.
+   Der Vorschlag ist das untere Quartil abzüglich der Kosten der Zielfonds —
+   in drei von vier Zeiträumen lag die Rendite darüber.                      */
+var fensterCache = {};
+function fenster(q, jahre) {
+  var key = Math.round(q * 1000) + '_' + jahre;
+  if (fensterCache[key]) return fensterCache[key];
+  var s = mixq(q), out = [], a;
+  for (a = Y0; a + jahre <= YN; a++) out.push(irr(100, jahre * 12, sparplan(s, a, a + jahre, 100)) * 100);
+  out.sort(function (x, y) { return x - y; });
+  var r = { n: out.length, min: out[0], q1: out[Math.floor(out.length * 0.25)],
+            med: out[Math.floor(out.length * 0.5)], max: out[out.length - 1] };
+  fensterCache[key] = r;
+  return r;
+}
+function vorschlag(pf, jahre) {
+  var f = fenster(pf.aktien / 100, jahre);
+  return Math.max(0.5, Math.min(12, Math.round((f.q1 - pf.fonds) * 10) / 10));
+}
+function fensterText(pf, jahre) {
+  var f = fenster(pf.aktien / 100, jahre);
+  return 'In allen ' + f.n + ' Zeitfenstern von ' + jahre + ' Jahren seit 1970 lag ein Sparplan mit '
+    + pf.aktien + ' % Aktienquote zwischen ' + pct(f.min - pf.fonds) + ' und ' + pct(f.max - pf.fonds)
+    + ' p. a., im Mittel bei ' + pct(f.med - pf.fonds) + '. Der Vorschlag nimmt das untere Viertel — '
+    + 'in drei von vier Zeiträumen war es besser.';
+}
+
+function stdev(s, a, b) {
+  var n = 0, sum = 0, y;
+  for (y = a + 1; y <= b; y++) { sum += s[ix(y)]; n++; }
+  if (n < 2) return 0;
+  var mu = sum / n, q = 0;
+  for (y = a + 1; y <= b; y++) q += Math.pow(s[ix(y)] - mu, 2);
+  return Math.sqrt(q / n);
+}
+
+function rueckblick(q, a, b, einmal, rate) {
+  var s = mixq(q), yrs = b - a, months = yrs * 12, y;
+  var f = grow(s, a, b), sp = sparplan(s, a, b, rate);
+  var best = -999, bestY = a + 1, worst = 999, worstY = a + 1;
+  for (y = a + 1; y <= b; y++) {
+    if (s[ix(y)] > best) { best = s[ix(y)]; bestY = y; }
+    if (s[ix(y)] < worst) { worst = s[ix(y)]; worstY = y; }
+  }
+  return {
+    serie: s, years: yrs, faktor: f,
+    einmalEnd: einmal * f, einmalCagr: cagr(f, yrs),
+    sparEin: rate * months, sparEnd: sp, sparIrr: irr(rate, months, sp),
+    tgEinmal: einmal * grow(R_TG, a, b), tgSpar: sparplan(R_TG, a, b, rate),
+    infFaktor: grow(R_INF, a, b), vola: stdev(s, a, b),
+    best: best, bestY: bestY, worst: worst, worstY: worstY
+  };
+}
+
+/* Zukunft — alle Kosten der Vermögensverwaltung eingerechnet */
+function zukunft(o) {
+  var p = port(o.pk), ent = p.entgelt / 100;
+  var months = Math.round(o.jahre * 12);
+  var rM = Math.pow(1 + o.rendite, 1 / 12) - 1;
+  var eegRate = o.rate * 12 * o.jahre * FEE_EEG_RATE;
+  var eegEinm = o.einmal * FEE_EEG_EINM;
+  var eeg = eegRate + eegEinm;
+
+  /* Repartierung: in den letzten fünf Jahren sinkt das laufende Verwaltungsentgelt
+     um 0,4 Prozentpunkte im Jahr — gerechnet auf das dann vorhandene Guthaben.  */
+  var repaAb = o.jahre >= REPA_MIN ? months - REPA_MON + 1 : 0;
+
+  /* ein Beitrag ohne Dynamik als Vergleichslinie */
+  var basis = o.rate;
+
+  var offen = eegRate, v = 0, ein = 0, kosten = 0, ohne = 0, repa = 0, rabG = 0;
+  var b, ab, j, m, rb, entM, gut;
+  var pts = [{ j: 0, wert: 0, ein: 0, ohne: 0 }];
+
+  if (o.einmal > 0) {
+    ein += o.einmal;
+    kosten += eegEinm;
+    v += o.einmal - eegEinm; ohne += o.einmal - eegEinm;
+  }
+  for (m = 1; m <= months; m++) {
+    j = Math.floor((m - 1) / 12);
+    if (o.rate > 0) {
+      b = o.rate * Math.pow(1 + o.dyn, j);
+      ein += b;
+      ab = 0;
+      if (offen > 0.005) { ab = Math.min(offen, b * TILGUNG); offen -= ab; kosten += ab; }
+      v += b - ab; ohne += b - ab;
+    }
+    rb = rabatt(v);
+    v *= (1 + rM); ohne *= (1 + rM);
+    v *= (1 + RUECK / 12); ohne *= (1 + RUECK / 12);
+
+    entM = v * ent / 12;                 /* Entgelt ohne jeden Vorteil        */
+    rabG += entM * rb;                   /* Ersparnis aus der Rabattstaffel   */
+    entM = entM * (1 - rb);              /* nach Staffelrabatt fällig         */
+    gut = 0;
+    if (repaAb && m >= repaAb) { gut = Math.min(v * REPA_SATZ / 12, entM); repa += gut; }
+    v -= (entM - gut);
+    ohne *= (1 - ent / 12);
+    if (v < 0) v = 0;
+    if (m % 12 === 0 || m === months) pts.push({ j: m / 12, wert: v, ein: ein, ohne: ohne });
+  }
+  return { wert: v, ein: ein, ohne: ohne, bonus: v - ohne, rabatt: rabG, repa: repa,
+           kosten: kosten, eeg: eeg, eegRate: eegRate, offen: offen, pts: pts,
+           repaJahr: repaAb ? (repaAb - 1) / 12 : 0, basisSumme: basis * 12 * o.jahre };
+}
+
+function zielRate(o) {
+  var lo = 0, hi = 100000, m, k, r;
+  for (k = 0; k < 60; k++) {
+    m = (lo + hi) / 2;
+    r = zukunft({ pk: o.pk, rate: m, einmal: o.einmal, jahre: o.jahre, rendite: o.rendite, dyn: o.dyn || 0 });
+    if (r.wert < o.ziel) lo = m; else hi = m;
+  }
+  return (lo + hi) / 2;
+}
+
+function entnahme(v, nettoPa, jahre) {
+  var i = Math.pow(1 + nettoPa, 1 / 12) - 1;
+  if (i <= 0) return { ewig: 0, verzehr: jahre > 0 ? v / (jahre * 12) : 0 };
+  var n = jahre * 12;
+  return { ewig: v * i, verzehr: v * i / (1 - Math.pow(1 + i, -n)) };
+}
+
+/* ═══════════════ 5. ZEICHEN-HELFER ═══════════════ */
+var C = { grid: 'rgba(18,33,61,.09)', tick: '#7A88A3', grey: '#7A88A3',
+          oxide: '#A6402A', navy: '#12213D', teal: '#12857A', green: '#2E6B47' };
+var FONT = '500 11.5px "IBM Plex Sans", system-ui, sans-serif';
+var FONTB = '600 12px "IBM Plex Sans", system-ui, sans-serif';
+
+function prep(cv, hCss) {
+  var w = cv.clientWidth || cv.parentNode.clientWidth || 600;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.style.height = hCss + 'px';
+  cv.width = Math.round(w * dpr); cv.height = Math.round(hCss * dpr);
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, hCss);
+  return { ctx: ctx, w: w, h: hCss };
+}
+function line(ctx, pts, col, w, dash) {
+  if (!pts.length) return;
+  ctx.save(); ctx.beginPath();
+  ctx.strokeStyle = col; ctx.lineWidth = w || 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if (dash) ctx.setLineDash(dash);
+  pts.forEach(function (p, i) { i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); });
+  ctx.stroke(); ctx.restore();
+}
+function area(ctx, pts, base, c0, c1, top) {
+  if (!pts.length) return;
+  ctx.save(); ctx.beginPath(); ctx.moveTo(pts[0][0], base);
+  pts.forEach(function (q) { ctx.lineTo(q[0], q[1]); });
+  ctx.lineTo(pts[pts.length - 1][0], base); ctx.closePath();
+  var g = ctx.createLinearGradient(0, top, 0, base);
+  g.addColorStop(0, c0); g.addColorStop(1, c1);
+  ctx.fillStyle = g; ctx.fill(); ctx.restore();
+}
+function label(ctx, txt, x, y, col, align, font) {
+  ctx.save(); ctx.fillStyle = col; ctx.font = font || FONT;
+  ctx.textAlign = align || 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(txt, x, y); ctx.restore();
+}
+function dot(ctx, x, y, col, r) {
+  ctx.save();
+  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(x, y, (r || 4) + 2, 0, 6.3); ctx.fill();
+  ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r || 4, 0, 6.3); ctx.fill();
+  ctx.restore();
+}
+
+/* ═══════════════ 6. LANGFRIST-CHART (log) ═══════════════ */
+function drawLong() {
+  var cv = document.getElementById('chartLong');
+  if (!cv) return;
+  var hh = Math.max(260, Math.min(400, cv.clientWidth * 0.42));
+  var p = prep(cv, hh), ctx = p.ctx, w = p.w, h = p.h;
+  var L = 46, R = 132, T = 16, B = 28, a = Y0, b = YN, n = b - a, y;
+
+  var s = [
+    { d: R_INF,   col: C.oxide, wd: 1.6, dash: [4, 4], name: 'Preise' },
+    { d: R_TG,    col: C.grey,  wd: 2.0, name: 'Tagesgeld' },
+    { d: R_RENT,  col: '#4C7FA6', wd: 2.2, name: 'Anleihen' },
+    { d: R_WORLD, col: C.teal,  wd: 2.8, name: 'Aktien' }
+  ];
+  s.forEach(function (o) {
+    o.pts = []; var v = 100;
+    o.pts.push([a, v]);
+    for (y = a + 1; y <= b; y++) { v *= (1 + o.d[ix(y)] / 100); o.pts.push([y, v]); }
+    o.end = v;
+  });
+  var maxI = 100;
+  s.forEach(function (o) { o.pts.forEach(function (q) { maxI = Math.max(maxI, q[1]); }); });
+  var lo = Math.log10(80), hi = Math.log10(maxI * 1.35);
+  function X(yy) { return L + (yy - a) / n * (w - L - R); }
+  function Y(v) { return T + (1 - (Math.log10(Math.max(v, 80)) - lo) / (hi - lo)) * (h - T - B); }
+
+  [100, 1000, 10000].forEach(function (g) {
+    if (g > maxI * 1.35) return;
+    var yy = Y(g);
+    line(ctx, [[L, yy], [w - R, yy]], C.grid, 1);
+    label(ctx, fak(g / 100), L - 8, yy, C.tick, 'right');
+  });
+  var st = yearStep(n, w - L - R);
+  for (y = a; y <= b; y += st) label(ctx, String(y), X(y), h - 12, C.tick, 'center');
+
+  s.forEach(function (o) {
+    line(ctx, o.pts.map(function (q) { return [X(q[0]), Y(q[1])]; }), o.col, o.wd, o.dash);
+  });
+  var used = [];
+  s.slice().sort(function (m, n2) { return n2.end - m.end; }).forEach(function (o) {
+    var yy = Y(o.end);
+    while (used.some(function (u) { return Math.abs(u - yy) < 13; })) yy += 13;
+    used.push(yy);
+    dot(ctx, X(b), Y(o.end), o.col, 3.5);
+    label(ctx, o.name + ' ' + fak(o.end / 100), w - R + 10, yy, o.col, 'left', FONTB);
+  });
+}
+
+/* ═══════════════ 7. RÜCKBLICK-CHART ═══════════════ */
+function drawHistory(serie, col, a, b) {
+  var cv = document.getElementById('chartHistory');
+  if (!cv) return;
+  var hh = Math.max(230, Math.min(320, cv.clientWidth * 0.44));
+  var p = prep(cv, hh), ctx = p.ctx, w = p.w, h = p.h;
+  var L = 58, R = 58, T = 34, B = 28, n = Math.max(1, b - a), y, i;
+
+  function build(d) { var v = 100, out = [[a, v]]; for (y = a + 1; y <= b; y++) { v *= (1 + d[ix(y)] / 100); out.push([y, v]); } return out; }
+  var mp = build(serie), tg = build(R_TG), inf = build(R_INF);
+  var lo0 = build(mixq(0)), hi100 = build(mixq(1));
+
+  /* Achse fest auf die Bandbreite skaliert — so wandert die Kurve beim Schieben
+     sichtbar durch das Band, statt dass die Achse mitspringt.                  */
+  var mx = 100;
+  hi100.forEach(function (q) { mx = Math.max(mx, q[1]); });
+  var ax = axis(mx * 1.06, 4), top = ax.top;
+
+  function X(yy) { return L + (yy - a) / n * (w - L - R); }
+  function Y(v) { return T + (1 - Math.min(v, top) / top) * (h - T - B); }
+
+  for (i = 0; i <= ax.ticks; i++) {
+    var gl = Y(ax.step * i);
+    line(ctx, [[L, gl], [w - R, gl]], C.grid, 1);
+    label(ctx, nf0.format(ax.step * i), L - 8, gl, C.tick, 'right');
+  }
+  label(ctx, 'aus 100 € wurden … €', 2, 13, C.tick, 'left');
+
+  var st = yearStep(n, w - L - R), lastLab = null;
+  for (y = a; y <= b; y++) if ((y - a) % st === 0) { label(ctx, String(y), X(y), h - 12, C.tick, 'center'); lastLab = y; }
+  if (lastLab !== b && (b - lastLab) >= st * 0.55) label(ctx, String(b), X(b), h - 12, C.tick, 'center');
+
+  var pLo = lo0.map(function (q) { return [X(q[0]), Y(q[1])]; });
+  var pHi = hi100.map(function (q) { return [X(q[0]), Y(q[1])]; });
+  var mpp = mp.map(function (q) { return [X(q[0]), Y(q[1])]; });
+
+  /* Bandbreite zwischen reiner Rentenanlage und voller Aktienquote */
+  ctx.save(); ctx.beginPath();
+  ctx.moveTo(pHi[0][0], pHi[0][1]);
+  pHi.forEach(function (q) { ctx.lineTo(q[0], q[1]); });
+  for (i = pLo.length - 1; i >= 0; i--) ctx.lineTo(pLo[i][0], pLo[i][1]);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(122,136,163,.13)'; ctx.fill(); ctx.restore();
+  line(ctx, pHi, 'rgba(122,136,163,.5)', 1.2);
+  line(ctx, pLo, 'rgba(122,136,163,.5)', 1.2);
+
+  area(ctx, mpp, h - B, hex2rgba(col, .24), hex2rgba(col, 0), T);
+  line(ctx, inf.map(function (q) { return [X(q[0]), Y(q[1])]; }), 'rgba(166,64,42,.8)', 1.6, [4, 4]);
+  line(ctx, tg.map(function (q) { return [X(q[0]), Y(q[1])]; }), C.grey, 1.9);
+  line(ctx, mpp, col, 3);
+
+  var last = mpp[mpp.length - 1];
+  dot(ctx, last[0], last[1], col, 4.5);
+  label(ctx, fak(mp[mp.length - 1][1] / 100), last[0] - 9, last[1] - 16, col, 'right', FONTB);
+  var lb = document.getElementById('legBand');
+  if (lb) lb.textContent = 'Bandbreite 0 – 100 % Aktien (' + fak(lo0[lo0.length - 1][1] / 100)
+    + ' bis ' + fak(hi100[hi100.length - 1][1] / 100) + ')';
+}
+
+/* ═══════════════ 8. ZUKUNFTS-CHART ═══════════════ */
+function drawFuture(cvId, res, col, ziel) {
+  var cv = document.getElementById(cvId);
+  if (!cv) return;
+  var hh = Math.max(230, Math.min(330, cv.clientWidth * 0.46));
+  var p = prep(cv, hh), ctx = p.ctx, w = p.w, h = p.h;
+  var L = 72, R = 44, T = 30, B = 28;
+  var pts = res.pts, last = pts[pts.length - 1], raw = 0, i;
+  pts.forEach(function (q) { raw = Math.max(raw, q.wert, q.ein); });
+  if (ziel) raw = Math.max(raw, ziel);
+  var av = axis(raw * 1.08, 4), maxV = av.top, yrs = last.j || 1;
+
+  function X(j) { return L + j / yrs * (w - L - R); }
+  function Y(v) { return T + (1 - v / maxV) * (h - T - B); }
+
+  for (i = 0; i <= av.ticks; i++) {
+    var gl = Y(av.step * i);
+    line(ctx, [[L, gl], [w - R, gl]], C.grid, 1);
+    label(ctx, nf0.format(av.step * i), L - 8, gl, C.tick, 'right');
+  }
+  label(ctx, 'Euro', 2, 13, C.tick, 'left');
+  var st = yearStep(yrs, w - L - R), lastJ = 0;
+  for (i = 0; i <= yrs; i += st) { label(ctx, 'Jahr ' + i, X(i), h - 12, C.tick, 'center'); lastJ = i; }
+  if (lastJ !== yrs && (yrs - lastJ) >= st * 0.55) label(ctx, 'Jahr ' + Math.round(yrs), X(yrs), h - 12, C.tick, 'center');
+
+  var wPts = pts.map(function (q) { return [X(q.j), Y(q.wert)]; });
+  var ePts = pts.map(function (q) { return [X(q.j), Y(q.ein)]; });
+  var oPts = pts.map(function (q) { return [X(q.j), Y(q.ohne == null ? q.wert : q.ohne)]; });
+
+  area(ctx, wPts, h - B, hex2rgba(col, .30), hex2rgba(col, 0), T);
+  area(ctx, ePts, h - B, 'rgba(122,136,163,.16)', 'rgba(122,136,163,.16)', T);
+
+  /* Vorteil aus Entgeltrabatt und Repartierung — als eigene grüne Zone */
+  if (res.bonus > 0) {
+    ctx.save(); ctx.beginPath();
+    ctx.moveTo(oPts[0][0], oPts[0][1]);
+    oPts.forEach(function (q) { ctx.lineTo(q[0], q[1]); });
+    for (i = wPts.length - 1; i >= 0; i--) ctx.lineTo(wPts[i][0], wPts[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(46,107,71,.30)'; ctx.fill(); ctx.restore();
+    line(ctx, oPts, 'rgba(46,107,71,.55)', 1.4, [3, 3]);
+  }
+
+  line(ctx, ePts, C.grey, 1.8, [5, 4]);
+  line(ctx, wPts, col, 2.8);
+
+  if (res.repaJahr && res.repaJahr < yrs) {
+    var rx = X(res.repaJahr);
+    line(ctx, [[rx, T + 12], [rx, h - B]], 'rgba(46,107,71,.5)', 1.4, [3, 4]);
+    label(ctx, 'Repartierung', rx + 7, T + 4, C.green, 'left', FONTB);
+  }
+
+  if (ziel) {
+    var zy = Y(ziel);
+    line(ctx, [[L, zy], [w - R, zy]], 'rgba(166,64,42,.75)', 1.6, [6, 4]);
+    label(ctx, 'Ziel ' + eurK(ziel), w - R, zy - 11, C.oxide, 'right', FONTB);
+  }
+  dot(ctx, wPts[wPts.length - 1][0], wPts[wPts.length - 1][1], col, 4.5);
+}
+
+/* ═══════════════ 9. OBERFLÄCHE ═══════════════ */
+function $(id) { return document.getElementById(id); }
+
+function buildPicker(host, current, onPick) {
+  host.innerHTML = '';
+  PORTS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('data-pk', p.k);
+    b.setAttribute('aria-pressed', p.k === current ? 'true' : 'false');
+    b.style.color = ramp(p.aktien / 100);
+    b.innerHTML = '<b style="color:var(--navy)">' + p.kurz + '</b><i>' + p.aktien + ' % Aktien</i>';
+    b.addEventListener('click', function () {
+      [].forEach.call(host.querySelectorAll('button'), function (o) {
+        o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+      });
+      onPick(p.k);
+    });
+    host.appendChild(b);
+  });
+}
+function setPicker(host, k) {
+  [].forEach.call(host.querySelectorAll('button'), function (o) {
+    o.setAttribute('aria-pressed', o.getAttribute('data-pk') === k ? 'true' : 'false');
+  });
+}
+
+/* ---------- Rückblick ---------- */
+var rbQ = 75;
+
+function rbSync() {
+  var f = $('rbFrom'), t = $('rbTo');
+  var a = +f.value, b = +t.value;
+  if (a >= b) { if (document.activeElement === f) { a = b - 1; f.value = a; } else { b = a + 1; t.value = b; } }
+  var span = YN - Y0;
+  var x0 = (a - Y0) / span * 100, x1 = (b - Y0) / span * 100;
+  var fill = $('rbFill');
+  fill.style.left = 'calc(11px + ' + x0 + '% - ' + (x0 / 100 * 22) + 'px)';
+  fill.style.width = 'calc(' + (x1 - x0) + '% - ' + ((x1 - x0) / 100 * 22) + 'px)';
+  return { a: a, b: b };
+}
+
+function matches(q) {
+  return PORTS.filter(function (p) { return Math.abs(p.aktien - q) <= MATCH; });
+}
+function nearest(q) {
+  var best = PORTS[0], d = 999;
+  PORTS.forEach(function (p) { var x = Math.abs(p.aktien - q); if (x < d) { d = x; best = p; } });
+  return best;
+}
+
+function buildLadder(q) {
+  var host = $('rbLadder');
+  if (!host) return;
+  host.innerHTML = '';
+  var on = matches(q);
+  PORTS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    var act = on.indexOf(p) >= 0;
+    b.className = act ? 'on' : '';
+    if (act) b.style.background = ramp(p.aktien / 100);
+    b.innerHTML = p.kurz + ' <em>' + p.aktien + ' %</em>';
+    b.title = 'Auf ' + p.aktien + ' % Aktien einstellen';
+    b.addEventListener('click', function () { $('rbQuote').value = p.aktien; rbRender(); });
+    host.appendChild(b);
+  });
+  var note = $('rbLadderNote'), nx = nearest(q);
+  if (!on.length) {
+    note.textContent = 'Bei ' + q + ' % Aktien liegt keine unserer Strategien. Am nächsten kommt '
+      + nx.name + ' mit ' + nx.aktien + ' % Aktien.';
+  } else {
+    note.textContent = (on.length === 1 ? 'Diese Strategie fährt' : 'Diese Strategien fahren')
+      + ' heute eine vergleichbare Gewichtung: '
+      + on.map(function (p) { return p.name + ' (' + pct(p.offPa) + ' p. a. seit ' + p.seit + ')'; }).join(' · ')
+      + '. Ein Klick stellt die Quote der jeweiligen Strategie ein.';
+  }
+}
+
+function rbRender() {
+  var s = rbSync(), a = s.a, b = s.b;
+  rbQ = +$('rbQuote').value;
+  var q = rbQ / 100, col = ramp(q);
+  var einmal = Math.max(0, +$('rbEinmal').value || 0);
+  var rate = Math.max(0, +$('rbRate').value || 0);
+  var r = rueckblick(q, a, b, einmal, rate);
+
+  $('rbQuoteVal').textContent = rbQ + ' % Aktien · ' + (100 - rbQ) + ' % Renten';
+  $('rbRangeLabel').textContent = a + ' – ' + b + ' · ' + rbQ + ' % Aktien';
+  $('rbYears').textContent = r.years + (r.years === 1 ? ' Jahr' : ' Jahre');
+  $('rbOutYearA').textContent = String(a);
+
+  $('rbOutEinmal').textContent = einmal > 0 ? eurK(r.einmalEnd) : '—';
+  $('rbOutEinmalNote').textContent = einmal > 0
+    ? 'Aus ' + eur(einmal) + ' wurden ' + eurK(r.einmalEnd) + ' · ' + pct(r.einmalCagr * 100) + ' p. a.'
+    : 'Keine Einmalanlage eingegeben.';
+
+  $('rbOutSpar').textContent = rate > 0 ? eurK(r.sparEnd) : '—';
+  $('rbOutSparNote').textContent = rate > 0
+    ? eur(r.sparEin) + ' eingezahlt in ' + (r.years * 12) + ' Raten · ' + pct(r.sparIrr * 100) + ' p. a.'
+    : 'Keine Rate eingegeben.';
+
+  $('rbPa').textContent = pct(r.einmalCagr * 100);
+  $('rbBest').textContent = pct(r.best) + ' (' + r.bestY + ')';
+  $('rbWorst').textContent = pct(r.worst) + ' (' + r.worstY + ')';
+  $('rbVola').textContent = pct(r.vola);
+  $('rbTg').textContent = rate > 0
+    ? 'Dieselbe Rate auf dem Tagesgeldkonto: ' + eurK(r.tgSpar)
+    : (einmal > 0 ? 'Dieselbe Summe auf dem Tagesgeldkonto: ' + eurK(r.tgEinmal) : '');
+
+  $('rbFactor').textContent = fak(r.faktor);
+  $('rbFactor').style.color = col;
+  $('rbFactorNote').textContent = 'hat sich diese Gewichtung vervielfacht. Die Verbraucherpreise stiegen '
+    + 'auf das ' + r.infFaktor.toLocaleString('de-DE', { maximumFractionDigits: 1 }) + '-fache.';
+
+  $('legPfSwatch').style.background = col;
+  $('legPfName').textContent = rbQ + ' % Aktien · ' + (100 - rbQ) + ' % Renten';
+
+  [].forEach.call(document.querySelectorAll('[data-span]'), function (c) {
+    var v = c.getAttribute('data-span').split(',');
+    c.setAttribute('aria-pressed', (+v[0] === a && +v[1] === b) ? 'true' : 'false');
+  });
+  [].forEach.call(document.querySelectorAll('[data-q]'), function (c) {
+    c.setAttribute('aria-pressed', +c.getAttribute('data-q') === rbQ ? 'true' : 'false');
+  });
+
+  buildLadder(rbQ);
+
+  var pf = nearest(rbQ);
+  var tr = Math.max(0, Math.min(12, r.sparIrr * 100 - pf.fonds));
+  $('rbTransfer').textContent = 'Rendite (' + pct(tr) + ') und ' + pf.kurz + ' übernehmen';
+  $('rbTransfer').setAttribute('data-rend', tr.toFixed(1));
+  $('rbTransfer').setAttribute('data-pk', pf.k);
+
+  drawHistory(r.serie, col, a, b);
+}
+
+/* ---------- Sparplan ---------- */
+var zkPk = 'balance', zkDyn = 0, zkAuto = true, zkVor = 0;
+
+function vorteilZeile(titel, text, wert) {
+  return '<div class="vz"><div class="stack gap-xs"><b>' + titel + '</b>'
+    + '<span class="mini">' + text + '</span></div><span class="vz-w">' + wert + '</span></div>';
+}
+
+function zkRender() {
+  var pf = port(zkPk), col = ramp(pf.aktien / 100);
+  var einmal = Math.max(0, +$('zkEinmal').value || 0);
+  var rate = Math.max(0, +$('zkRate').value || 0);
+  var jahre = +$('zkJahre').value;
+
+  /* Vorschlag für diese Strategie und Laufzeit, solange nicht von Hand verstellt */
+  var vor = vorschlag(pf, jahre);
+  if (zkAuto && Math.abs(+$('zkRendite').value - zkVor) < 0.001) $('zkRendite').value = vor;
+  zkVor = vor;
+  var rend = +$('zkRendite').value;
+
+  $('zkJahreVal').textContent = jahre + ' Jahre';
+  $('zkRenditeVal').textContent = pct(rend);
+  $('zkAssump').textContent = pct(rend) + ' p. a. angenommen · ' + pf.kurz;
+  $('zkOutJahre').textContent = String(jahre);
+  $('zkRateHint').textContent = rate > 0 && rate < 50
+    ? 'Ab 50 € monatlich — für Minderjährige ab 25 €.'
+    : 'Ab 50 € monatlich, für Minderjährige ab 25 €.';
+  $('zkRateHint').className = (rate > 0 && rate < 50) ? 'hint warn' : 'hint';
+
+  var r = zukunft({ pk: zkPk, rate: rate, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: zkDyn / 100 });
+  var plus = r.wert - r.ein;
+  var ent = entnahme(r.wert, rend / 100 + RUECK - pf.entgelt / 100 * (1 - rabatt(r.wert)), 20);
+
+  $('zkOutWert').textContent = eurK(r.wert);
+  $('zkOutNote').textContent = eur(r.ein) + ' eingezahlt · ' + eurK(plus) + ' Wertzuwachs';
+  $('zkEin').textContent = eurK(r.ein);
+  $('zkPlus').textContent = (plus >= 0 ? '+' : '') + eurK(plus);
+  $('zkBonus').textContent = '+' + eur(r.bonus);
+  $('zkEntn').textContent = eur(ent.ewig);
+  $('legZkSwatch').style.background = col;
+
+  /* Vorteilskarte: Repartierung, Entgeltrabatt, kostenfreie Dynamik */
+  var ohneDyn = zkDyn > 0
+    ? zukunft({ pk: zkPk, rate: rate, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: 0 })
+    : null;
+  var rows = '', zusatz = 0;
+  if (r.repa > 0) {
+    rows += vorteilZeile('Repartierung in den letzten fünf Jahren',
+      'In den letzten fünf Jahren der Anlagedauer sinkt das Verwaltungsentgelt um 0,4 Prozentpunkte '
+      + 'im Jahr — gerechnet auf Ihr dann vorhandenes Guthaben. Je größer das Depot, desto mehr.',
+      eur(r.repa));
+  } else if (jahre < 10) {
+    rows += vorteilZeile('Repartierung', 'Greift erst ab zehn Jahren Anlagedauer — mit dieser Laufzeit noch nicht.', '—');
+  }
+  if (r.rabatt > 0) {
+    rows += vorteilZeile('Entgeltrabatt nach Depotwert',
+      'Ab 25.000 € Depotwert sinkt das Verwaltungsentgelt stufenweise, bis zu 30 %.', eur(r.rabatt));
+  }
+  if (ohneDyn) {
+    /* Die Dynamik erhöht die Beitragssumme, das Einrichtungsentgelt aber nicht.
+       Ausgewiesen wird deshalb, was ein dynamikpflichtiges Entgelt gekostet hätte. */
+    var mehrEin = r.ein - ohneDyn.ein;
+    var eegVoll = r.ein * FEE_EEG_RATE + einmal * FEE_EEG_EINM;
+    rows += vorteilZeile('Kostenfreie Dynamik von ' + pct(zkDyn, 0),
+      'Die Erhöhungen bringen ' + eur(mehrEin) + ' zusätzlich ins Depot und daraus '
+      + eurK(r.wert - ohneDyn.wert - mehrEin) + ' Wertzuwachs. Ein Einrichtungsentgelt auf die '
+      + 'erhöhten Beiträge fällt nicht an — es bleibt bei ' + eur(r.eeg) + ' statt ' + eur(eegVoll) + '.',
+      eur(eegVoll - r.eeg));
+    zusatz = eegVoll - r.eeg;
+  }
+  rows += '<p class="vz-foot">Weil diese Beträge im Depot bleiben und weiterarbeiten, stehen am Ende '
+    + 'der Laufzeit ' + eur(r.bonus + zusatz) + ' mehr im Depot, als ohne Rabatt und Repartierung '
+    + 'zusammengekommen wären.</p>';
+  $('zkVorteil').innerHTML = rows;
+  $('zkVorteilSum').textContent = '+' + eur(r.repa + r.rabatt + zusatz);
+
+  var foot = 'Alle Kosten der Vermögensverwaltung sind eingerechnet: die einmaligen Kosten von '
+    + eur(r.eeg) + ', das laufende Verwaltungsentgelt von ' + pct(pf.entgelt, 3)
+    + ' p. a. inklusive luxemburgischer Mehrwertsteuer und die Rückvergütung von 0,4 % p. a. '
+    + 'Entgeltrabatt und Repartierung sind gegengerechnet. ';
+  if (r.offen > 1) {
+    foot += 'Bei dieser Rate und Laufzeit sind die einmaligen Kosten am Ende noch nicht vollständig getilgt — '
+      + 'eine höhere Rate oder eine längere Laufzeit ändert das. ';
+  }
+  foot += 'Die offizielle Angebotsdarstellung von Baumann & Partners weist das laufende Verwaltungsentgelt '
+    + 'nicht ab und liegt deshalb höher.';
+  $('zkFoot').textContent = foot;
+
+  $('zkOff').setAttribute('data-rend', vor.toFixed(1));
+  $('zkOff').textContent = 'Vorschlag ' + pct(vor);
+  [].forEach.call(document.querySelectorAll('.chip[data-rend]'), function (c) {
+    c.setAttribute('aria-pressed', Math.abs(+c.getAttribute('data-rend') - rend) < 0.05 ? 'true' : 'false');
+  });
+  if (zkAuto) $('zkRenditeHint').textContent = fensterText(pf, jahre);
+
+  drawFuture('chartFuture', r, col, 0);
+}
+
+/* ---------- Anlageziel ---------- */
+var zlPk = 'balance', zlDyn = 0, zlAuto = true, zlVor = 0;
+
+function zlRender() {
+  var pf = port(zlPk), col = ramp(pf.aktien / 100);
+  var ziel = Math.max(1000, +$('zlZiel').value || 250000);
+  var jahre = +$('zlJahre').value;
+  var einmal = Math.max(0, +$('zlEinmal').value || 0);
+
+  var vor = vorschlag(pf, jahre);
+  if (zlAuto && Math.abs(+$('zlRendite').value - zlVor) < 0.001) $('zlRendite').value = vor;
+  zlVor = vor;
+  var rend = +$('zlRendite').value;
+
+  $('zlVorschlag').setAttribute('data-zlrend', vor.toFixed(1));
+  $('zlVorschlag').textContent = 'Vorschlag ' + pct(vor);
+  $('zlVorschlag').setAttribute('aria-pressed', Math.abs(vor - rend) < 0.05 ? 'true' : 'false');
+  if (zlAuto) $('zlRenditeHint').textContent = fensterText(pf, jahre);
+
+  $('zlJahreVal').textContent = jahre + ' Jahren';
+  $('zlRenditeVal').textContent = pct(rend);
+  $('zlHead').textContent = eurK(ziel) + ' in ' + jahre + ' Jahren';
+
+  var rate = zielRate({ pk: zlPk, ziel: ziel, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: zlDyn / 100 });
+  var r = zukunft({ pk: zlPk, rate: rate, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: zlDyn / 100 });
+  var plus = r.wert - r.ein;
+  var anteil = r.wert > 0 ? plus / r.wert * 100 : 0;
+  var entRend = +$('zlEntRend').value;
+  $('zlEntRendVal').textContent = pct(entRend);
+  var nettoPa = entRend / 100 + RUECK - pf.entgelt / 100 * (1 - rabatt(r.wert));
+  var ent = entnahme(r.wert, nettoPa, 20);
+
+  $('zlRate').textContent = eur(Math.ceil(rate));
+  $('zlNote').textContent = (zlDyn > 0
+      ? 'im ersten Jahr, danach jährlich ' + pct(zlDyn, 0) + ' mehr — '
+      : '')
+    + (einmal > 0 ? 'zusätzlich zur Einmalanlage von ' + eur(einmal) + ', ' : '')
+    + 'bei ' + pct(rend) + ' p. a. und der Strategie ' + pf.kurz + '.';
+
+  $('zlEin').textContent = eurK(r.ein);
+  $('zlPlus').textContent = '+' + eurK(plus);
+  $('zlAnteil').textContent = pct(anteil, 0);
+  $('zlBonus').textContent = '+' + eur(r.repa + r.rabatt);
+
+  $('zlE1').textContent = eur(ent.ewig);
+  $('zlE2').textContent = eur(ent.verzehr);
+  $('zlE1Bar').style.width = (ent.verzehr > 0 ? Math.max(4, ent.ewig / ent.verzehr * 100) : 0).toFixed(1) + '%';
+  $('zlE1Bar').style.background = 'linear-gradient(90deg,' + col + ',' + hex2rgba(col, .65) + ')';
+  $('zlE2Bar').style.width = '100%';
+  $('legZlSwatch').style.background = col;
+
+  $('zlFoot').textContent = 'Die Entnahmebeträge rechnen mit ' + pct(entRend) + ' Wertentwicklung in der '
+    + 'Entnahmephase, nach Abzug des Verwaltungsentgelts bleiben ' + pct(nettoPa * 100) + ' p. a. '
+    + 'Ohne Kapitalverzehr bleibt das Vermögen erhalten und vererbbar; mit Kapitalverzehr ist das Depot '
+    + 'nach 20 Jahren aufgebraucht. Steuern sind nicht berücksichtigt.';
+
+  [].forEach.call(document.querySelectorAll('[data-ziel]'), function (c) {
+    var v = c.getAttribute('data-ziel').split(',');
+    c.setAttribute('aria-pressed', (+v[0] === ziel && +v[1] === jahre) ? 'true' : 'false');
+  });
+
+  drawFuture('chartZiel', r, col, ziel);
+}
+
+/* ---------- Strategiekarten und Rabattstaffel ---------- */
+function buildCards() {
+  var host = $('pcards');
+  if (!host) return;
+  host.innerHTML = '';
+  PORTS.forEach(function (p) {
+    var col = ramp(p.aktien / 100);
+    var d = document.createElement('article');
+    d.className = 'pcard';
+    d.style.color = col;
+    d.innerHTML =
+      '<p class="risk">' + p.aktien + ' % Aktien</p>' +
+      '<h3>' + p.name + '</h3>' +
+      '<p class="pa">' + pct(p.offPa) + '</p>' +
+      '<p class="mini" style="color:var(--navy-4)">p. a. seit ' + p.seit + ' laut Produktinformationsblatt</p>' +
+      (p.warn ? '<p class="hint warn" style="font-size:.75rem">' + p.warn + '</p>' : '') +
+      '<p>' + p.text + '</p>' +
+      '<p class="mini"><b style="color:var(--navy)">Aktuelle Zusammensetzung:</b> ' + p.stich + '</p>' +
+      '<ul>'
+      + '<li><span>Letzte 12 Monate</span><b>' + pct(p.j1) + '</b></li>'
+      + '<li><span>Volatilität</span><b>' + pct(p.offVola) + '</b></li>'
+      + '<li><span>Verwaltungsentgelt</span><b>' + pct(p.entgelt, 3) + '</b></li>'
+      + '<li><span>Anlagehorizont</span><b>' + p.horizont + '</b></li>'
+      + '</ul>';
+    host.appendChild(d);
+  });
+}
+
+function buildStaffel() {
+  var host = $('staffel');
+  if (!host) return;
+  host.innerHTML = '';
+  var rows = [[25000, .05], [50000, .10], [75000, .15], [100000, .20], [150000, .25], [200000, .30]];
+  rows.forEach(function (r, i) {
+    var d = document.createElement('div');
+    d.style.cssText = 'display:flex;justify-content:space-between;gap:14px;padding:8px 0;'
+      + (i < rows.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,.14)' : '');
+    d.innerHTML = '<span>ab ' + nf0.format(r[0]) + ' € Depotwert</span>'
+      + '<span class="num" style="font-weight:600;color:#8FE0D0">&minus;' + Math.round(r[1] * 100) + ' %</span>';
+    host.appendChild(d);
+  });
+}
+
+
+/* ═══════════════ 11. PROGNOSE ALS PDF ═══════════════
+   Erzeugt ein Druckdokument und ruft den Druckdialog auf. Dort wählt der
+   Nutzer „Als PDF sichern". Kein externer Dienst, keine Bibliothek.      */
+
+var RECHT_KURZ = 'Unverbindliche Modellrechnung — kein Angebot, keine Anlageberatung und keine '
+  + 'Anlageempfehlung. Die dargestellten Werte beruhen ausschließlich auf den oben angegebenen, '
+  + 'frei gewählten Annahmen und sind keine Zusage über eine künftige Wertentwicklung.';
+
+function rechtLang(pf) {
+  return '<b>Rechtliche Hinweise.</b> Diese Unterlage ist eine unverbindliche Modellrechnung und dient '
+    + 'ausschließlich der Veranschaulichung. Sie ist weder ein Angebot noch eine Aufforderung zur Abgabe '
+    + 'eines Angebots, weder eine Anlageberatung noch eine Anlageempfehlung und ersetzt keine anleger- und '
+    + 'anlagegerechte Beratung. Es wird keine bestimmte Wertentwicklung zugesagt oder in Aussicht gestellt. '
+    + 'Die angenommene Wertentwicklung ist eine frei gewählte Rechengröße; die tatsächliche Entwicklung kann '
+    + 'erheblich davon abweichen und auch negativ sein. Ein Verlust des eingesetzten Kapitals ist möglich. '
+    + '<b>Risiken.</b> Die Vermögenswerte unterliegen Kurs-, Zins- und Währungsschwankungen; hinzu kommen '
+    + 'allgemeines Marktrisiko, Branchen- und Themenrisiken sowie Länderrisiken. Mit steigender Aktienquote '
+    + 'nehmen die Wertschwankungen in der Regel zu. Eine Schutzschwelle ist ein Absicherungsmechanismus im '
+    + 'Musterportfolio und keine Garantie. <b>Vergangenheitswerte.</b> Historische Wertentwicklungen und die '
+    + 'hier gezeigten Indexauswertungen sind kein verlässlicher Indikator für die künftige Entwicklung und '
+    + 'lassen keine Rückschlüsse auf sie zu. <b>Kosten.</b> Berücksichtigt sind das einmalige Entgelt für die '
+    + 'Einrichtung der Vermögensverwaltung, das laufende Verwaltungsentgelt von ' + pct(pf.entgelt, 3)
+    + ' p. a. inklusive luxemburgischer Mehrwertsteuer, die kalkulatorische Rückvergütung aus '
+    + 'Vertriebsprovisionen der Zielfonds von durchschnittlich 0,4 % des Depotwertes, der Entgeltrabatt nach '
+    + 'Depotwert sowie die Repartierung in den letzten fünf Jahren der Anlagedauer. Die Kosten der Zielfonds '
+    + 'sind in der angenommenen Wertentwicklung enthalten. Das einmalige Entgelt ist mit 7,5 % der '
+    + 'Beitragssumme ohne Dynamik beziehungsweise 3,0 % einer Einmalanlage angesetzt und wird aus den ersten '
+    + 'Beiträgen getilgt. Depotführungsentgelte sind nicht berücksichtigt. Maßgeblich sind allein die '
+    + 'Bedingungen zum Vermögensverwaltungsvertrag; die dort geregelten Entgelte und Voraussetzungen für '
+    + 'Rabatt und Repartierung können abweichen. <b>Steuern und Inflation.</b> Erträge unterliegen der '
+    + 'Abgeltungsteuer; bei Depotführung in Luxemburg erfolgt kein Einbehalt durch die depotführende Stelle, '
+    + 'die Erträge sind in der Steuererklärung anzugeben. Steuern und Kaufkraftverluste durch Inflation sind '
+    + 'in dieser Darstellung nicht berücksichtigt und mindern das reale Ergebnis. <b>Unterlagen.</b> '
+    + 'Verbindliche Informationen entnehmen Sie bitte dem Produktinformationsblatt der gewählten '
+    + 'Anlagestrategie, der Werbebroschüre zum ZielsparKonto sowie den Geschäftsbedingungen, '
+    + 'Zusatzvereinbarungen und Sonderbedingungen der Baumann &amp; Partners S.A. Diese Unterlage richtet '
+    + 'sich an Personen mit Wohnsitz in der Bundesrepublik Deutschland.';
+}
+
+function pgKopf(titel) {
+  return '<div class="pg-head"><b>ZielsparKonto · Vermögensverwaltung</b>'
+    + '<span>' + titel + '<br>Erstellt am ' + new Date().toLocaleDateString('de-DE')
+    + '</span></div>';
+}
+function pgFuss(seite) {
+  return '<div class="pg-foot"><span>Unverbindliche Modellrechnung · CEB Bankshop AG, Stallbaumstraße 11, '
+    + '04155 Leipzig · Vermögensverwalter: Baumann &amp; Partners S.A., Luxemburg</span>'
+    + '<span>Seite ' + seite + '</span></div>';
+}
+function kv(a, b) { return '<div><span>' + a + '</span><b>' + b + '</b></div>'; }
+function esc(t) { return String(t || '').replace(/[<>&]/g, function (c) { return { '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]; }); }
+
+function empfaenger() {
+  var n = esc(($('docName') || {}).value), be = esc(($('docBerater') || {}).value);
+  var out = '';
+  if (n) out += '<p class="lead"><b>Für ' + n + '</b>' + (be ? ' · Ihr Ansprechpartner: ' + be : '') + '</p>';
+  else if (be) out += '<p class="lead">Ihr Ansprechpartner: ' + be + '</p>';
+  return out;
+}
+
+function szenarien(o) {
+  var rows = '', set = [0, 4, 6, 8], eig = Math.round(o.rendite * 1000) / 10, i, r, x;
+  if (set.indexOf(eig) < 0) { set.push(eig); set.sort(function (a, b) { return a - b; }); }
+  rows += '<tr><th>Angenommene Wertentwicklung</th><th>Eingezahlt</th><th>Depotwert</th>'
+    + '<th>Wertzuwachs</th><th>Entnahme monatlich</th></tr>';
+  for (i = 0; i < set.length; i++) {
+    x = set[i];
+    r = zukunft({ pk: o.pk, rate: o.rate, einmal: o.einmal, jahre: o.jahre, rendite: x / 100, dyn: o.dyn });
+    var pf = port(o.pk);
+    var e = entnahme(r.wert, x / 100 + RUECK - pf.entgelt / 100 * (1 - rabatt(r.wert)), 20);
+    rows += '<tr' + (Math.abs(x - eig) < 0.05 ? ' class="hi"' : '') + '><td>' + pct(x) + ' p. a.</td><td>'
+      + eur(r.ein) + '</td><td>' + eur(r.wert) + '</td><td>' + eur(r.wert - r.ein) + '</td><td>'
+      + eur(e.ewig) + '</td></tr>';
+  }
+  return '<table class="pg-t">' + rows + '</table>';
+}
+
+function verlauf(r) {
+  var rows = '<tr><th>Jahr</th><th>Eingezahlt</th><th>Depotwert</th><th>Wertzuwachs</th></tr>', i, q;
+  var n = r.pts.length - 1, sk = Math.ceil(n / 22);
+  for (i = 1; i <= n; i++) {
+    q = r.pts[i];
+    if (i !== n && sk > 1 && i % sk !== 0) continue;
+    rows += '<tr' + (i === n ? ' class="hi"' : '') + '><td>Jahr ' + Math.round(q.j)
+      + '</td><td>' + eur(q.ein) + '</td><td>' + eur(q.wert) + '</td><td>'
+      + eur(q.wert - q.ein) + '</td></tr>';
+  }
+  return '<table class="pg-t">' + rows + '</table>'
+    + (sk > 1 ? '<p style="font-size:7.5pt;color:#7A88A3;margin-top:3px">Aus Platzgründen im '
+        + sk + '-Jahres-Schritt dargestellt; das letzte Jahr ist immer enthalten.</p>' : '');
+}
+
+function boonBlock(r, zusatz, dynP) {
+  var h = '<div class="pg-boon"><div class="hd"><span>Was zurückkommt und was Sie sparen</span><span>'
+    + eur(r.repa + r.rabatt + zusatz) + '</span></div>';
+  if (r.repa > 0) h += '<div class="rw"><span>Repartierung: 0,4 Prozentpunkte weniger Verwaltungsentgelt '
+    + 'in den letzten fünf Jahren</span><b>' + eur(r.repa) + '</b></div>';
+  if (r.rabatt > 0) h += '<div class="rw"><span>Entgeltrabatt nach Depotwert</span><b>' + eur(r.rabatt) + '</b></div>';
+  if (zusatz > 0) h += '<div class="rw"><span>Kostenfreie Dynamik von ' + pct(dynP, 0)
+    + ' — kein zusätzliches Einrichtungsentgelt</span><b>' + eur(zusatz) + '</b></div>';
+  return h + '</div>';
+}
+
+function entnahmeTab(e, wert, satz) {
+  return (satz != null ? '<p>Gerechnet mit ' + pct(satz) + ' Wertentwicklung in der Entnahmephase.</p>' : '')
+    + '<table class="pg-t"><tr><th>Entnahmeform</th><th>Monatlich</th><th>Kapital danach</th></tr>'
+    + '<tr><td>Ohne Kapitalverzehr</td><td>' + eur(e.ewig) + '</td><td>' + eur(wert) + ' bleiben erhalten</td></tr>'
+    + '<tr><td>Über 20 Jahre mit Kapitalverzehr</td><td>' + eur(e.verzehr) + '</td><td>aufgebraucht</td></tr></table>';
+}
+
+function bild(id) {
+  var cv = document.getElementById(id);
+  try { return '<img class="pg-img" src="' + cv.toDataURL('image/png') + '" alt="">'; }
+  catch (e) { return ''; }
+}
+
+function druckeSparplan() {
+  var pf = port(zkPk);
+  var einmal = Math.max(0, +$('zkEinmal').value || 0);
+  var rate = Math.max(0, +$('zkRate').value || 0);
+  var jahre = +$('zkJahre').value, rend = +$('zkRendite').value;
+  var o = { pk: zkPk, rate: rate, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: zkDyn / 100 };
+  var r = zukunft(o);
+  var ohneDyn = zkDyn > 0 ? zukunft({ pk: zkPk, rate: rate, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: 0 }) : null;
+  var zusatz = ohneDyn ? (r.ein * FEE_EEG_RATE + einmal * FEE_EEG_EINM) - r.eeg : 0;
+  var nettoPa = rend / 100 + RUECK - pf.entgelt / 100 * (1 - rabatt(r.wert));
+  var e = entnahme(r.wert, nettoPa, 20);
+  var f = fenster(pf.aktien / 100, jahre);
+
+  var p1 = '<div class="pg">' + pgKopf('Modellrechnung Sparplan')
+    + '<h1>Ihre Modellrechnung</h1>' + empfaenger()
+    + '<p class="lead">' + pf.name + ' · monatlich ' + eur(rate)
+    + (zkDyn > 0 ? ' mit ' + pct(zkDyn, 0) + ' Dynamik' : '')
+    + (einmal > 0 ? ' · Einmalanlage ' + eur(einmal) : '')
+    + ' · ' + jahre + ' Jahre · angenommen ' + pct(rend) + ' p. a.</p>'
+    + '<div class="pg-hero"><div><div class="lbl">Depotwert nach ' + jahre + ' Jahren</div>'
+    + '<div class="val">' + eur(r.wert) + '</div></div>'
+    + '<div class="sub">' + eur(r.ein) + ' eingezahlt · ' + eur(r.wert - r.ein) + ' Wertzuwachs · '
+    + 'daraus monatlich ' + eur(e.ewig) + ' entnehmbar, ohne das Kapital anzugreifen</div></div>'
+    + '<div class="pg-kv">'
+    + kv('Anlagestrategie', pf.name)
+    + kv('Aktienquote laut Produktinformationsblatt', pf.aktien + ' %')
+    + kv('Monatlicher Beitrag', eur(rate) + (zkDyn > 0 ? ' im ersten Jahr' : ''))
+    + kv('Dynamik', zkDyn > 0 ? pct(zkDyn, 0) + ' jährlich, kostenfrei' : 'ohne')
+    + kv('Einmalanlage', einmal > 0 ? eur(einmal) : '—')
+    + kv('Anlagedauer', jahre + ' Jahre')
+    + kv('Summe der Beiträge', eur(r.ein))
+    + kv('Angenommene Wertentwicklung', pct(rend) + ' p. a.')
+    + kv('Laufendes Verwaltungsentgelt', pct(pf.entgelt, 3) + ' p. a. inkl. MwSt.')
+    + kv('Einmaliges Einrichtungsentgelt', eur(r.eeg))
+    + '</div>'
+    + bild('chartFuture')
+    + boonBlock(r, zusatz, zkDyn)
+    + '<p class="pg-legal">' + RECHT_KURZ + '</p>'
+    + pgFuss(1) + '</div>';
+
+  var p2 = '<div class="pg">' + pgKopf('Modellrechnung Sparplan')
+    + '<h2>Was aus anderen Annahmen würde</h2>'
+    + szenarien(o)
+    + '<h2>Wertentwicklung Jahr für Jahr bei ' + pct(rend) + ' p. a.</h2>'
+    + verlauf(r)
+    + '<h2>Entnahme am Ende der Anlagedauer</h2>'
+    + entnahmeTab(e, r.wert, rend)
+    + pgFuss(2) + '</div>';
+
+  var p3 = '<div class="pg">' + pgKopf('Modellrechnung Sparplan')
+    + '<h2>Einordnung aus der Vergangenheit</h2>'
+    + '<p>In allen ' + f.n + ' Zeitfenstern von ' + jahre + ' Jahren seit 1970 hätte ein monatlicher '
+    + 'Sparplan mit einer Aktienquote von ' + pf.aktien + ' % zwischen ' + pct(f.min - pf.fonds)
+    + ' und ' + pct(f.max - pf.fonds) + ' pro Jahr erbracht, im Mittel ' + pct(f.med - pf.fonds)
+    + '. Die hier angenommenen ' + pct(rend) + ' entsprechen etwa dem unteren Viertel dieser Spanne — '
+    + 'in drei von vier Zeiträumen lag das Ergebnis darüber.</p>'
+    + '<p>Grundlage sind echte Jahresrenditen in Euro: Weltaktien (MSCI World, Gross Total Return), '
+    + 'Schwellenländer (MSCI Emerging Markets) und Euro-Anleihen (REX-Performanceindex, ab 2023 '
+    + 'Bloomberg Euro Aggregate), umgerechnet über die Jahresendkurse USD/EUR und vor 1999 '
+    + 'synthetisch über DM/USD. Der Aktienteil besteht aus 90 % Weltaktien und 10 % Schwellenländern, '
+    + 'gewichtet nach der genannten Aktienquote und jährlich zurückgewichtet, abzüglich der Kosten '
+    + 'der Zielfonds. Es handelt sich um eine Indexauswertung anhand der heutigen Aktienquote der '
+    + 'Anlagestrategie — die tatsächliche Quote schwankt nach Marktlage. Dies ist nicht die '
+    + 'Wertentwicklung des tatsächlichen Musterportfolios; diese entnehmen Sie bitte dem '
+    + 'Produktinformationsblatt.</p>'
+    + '<p class="pg-legal">' + rechtLang(pf) + '</p>'
+    + pgFuss(3) + '</div>';
+
+  return p1 + p2 + p3;
+}
+
+function druckeZiel() {
+  var pf = port(zlPk);
+  var ziel = Math.max(1000, +$('zlZiel').value || 250000);
+  var jahre = +$('zlJahre').value, einmal = Math.max(0, +$('zlEinmal').value || 0);
+  var rend = +$('zlRendite').value;
+  var rate = zielRate({ pk: zlPk, ziel: ziel, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: zlDyn / 100 });
+  var o = { pk: zlPk, rate: rate, einmal: einmal, jahre: jahre, rendite: rend / 100, dyn: zlDyn / 100 };
+  var r = zukunft(o);
+  var entRend = +$('zlEntRend').value;
+  var nettoPa = entRend / 100 + RUECK - pf.entgelt / 100 * (1 - rabatt(r.wert));
+  var e = entnahme(r.wert, nettoPa, 20);
+  var f = fenster(pf.aktien / 100, jahre);
+
+  return '<div class="pg">' + pgKopf('Modellrechnung Anlageziel')
+    + '<h1>Ihr Anlageziel</h1>' + empfaenger()
+    + '<p class="lead">' + eur(ziel) + ' in ' + jahre + ' Jahren · ' + pf.name
+    + ' · angenommen ' + pct(rend) + ' p. a.</p>'
+    + '<div class="pg-hero"><div><div class="lbl">Dafür nötiger Monatsbeitrag</div>'
+    + '<div class="val">' + eur(Math.ceil(rate)) + '</div></div>'
+    + '<div class="sub">' + (zlDyn > 0 ? 'im ersten Jahr, danach jährlich ' + pct(zlDyn, 0) + ' mehr · ' : '')
+    + eur(r.ein) + ' Beiträge insgesamt · ' + eur(r.wert - r.ein) + ' davon Wertzuwachs</div></div>'
+    + '<div class="pg-kv">'
+    + kv('Zielbetrag', eur(ziel))
+    + kv('Anlagestrategie', pf.name)
+    + kv('Zeitraum', jahre + ' Jahre')
+    + kv('Aktienquote', pf.aktien + ' %')
+    + kv('Einmalanlage', einmal > 0 ? eur(einmal) : '—')
+    + kv('Dynamik', zlDyn > 0 ? pct(zlDyn, 0) + ' jährlich, kostenfrei' : 'ohne')
+    + kv('Summe der Beiträge', eur(r.ein))
+    + kv('Anteil, den der Markt trägt', pct(r.wert > 0 ? (r.wert - r.ein) / r.wert * 100 : 0, 0))
+    + '</div>'
+    + bild('chartZiel')
+    + '<h2>Was das Ziel später abwirft</h2>'
+    + entnahmeTab(e, r.wert, entRend)
+    + '<p class="pg-legal">' + RECHT_KURZ + '</p>'
+    + pgFuss(1) + '</div>'
+    + '<div class="pg">' + pgKopf('Modellrechnung Anlageziel')
+    + '<h2>Wenn es anders läuft</h2>'
+    + szenarien(o)
+    + '<p>Die Tabelle zeigt, was aus genau diesem Beitrag bei anderer Wertentwicklung würde. '
+    + 'In allen ' + f.n + ' Zeitfenstern von ' + jahre + ' Jahren seit 1970 lag ein Sparplan mit '
+    + pf.aktien + ' % Aktienquote zwischen ' + pct(f.min - pf.fonds) + ' und ' + pct(f.max - pf.fonds)
+    + ' pro Jahr, im Mittel bei ' + pct(f.med - pf.fonds) + '. Die hier angesetzten ' + pct(rend)
+    + ' entsprechen etwa dem unteren Viertel dieser Spanne.</p>'
+    + '<h2>Wertentwicklung Jahr für Jahr bei ' + pct(rend) + ' p. a.</h2>'
+    + verlauf(r)
+    + pgFuss(2) + '</div>'
+    + '<div class="pg">' + pgKopf('Modellrechnung Anlageziel')
+    + '<p class="pg-legal">' + rechtLang(pf) + '</p>'
+    + pgFuss(3) + '</div>';
+}
+
+function drucke(html) {
+  var d = $('print');
+  d.innerHTML = html;
+  window.setTimeout(function () { window.print(); }, 60);
+}
+
+/* ---------- Berechnung als Link sichern ---------- */
+function zustand() {
+  return ['q' + rbQ, 'a' + $('rbFrom').value, 'b' + $('rbTo').value,
+          'p' + zkPk, 'r' + $('zkRate').value, 'e' + $('zkEinmal').value,
+          'j' + $('zkJahre').value, 'd' + zkDyn, 'w' + $('zkRendite').value,
+          'P' + zlPk, 'Z' + $('zlZiel').value, 'J' + $('zlJahre').value,
+          'E' + $('zlEinmal').value, 'D' + zlDyn, 'W' + $('zlRendite').value,
+          'V' + $('zlEntRend').value].join(',');
+}
+function ladeZustand() {
+  var hs = (location.hash || '').replace(/^#/, '');
+  if (!hs) return false;
+  var map = {};
+  hs.split(',').forEach(function (t) { if (t) map[t.charAt(0)] = t.slice(1); });
+  function set(id, v) { if (v !== undefined && $(id)) $(id).value = v; }
+  if (map.q !== undefined) { $('rbQuote').value = map.q; rbQ = +map.q; }
+  set('rbFrom', map.a); set('rbTo', map.b);
+  if (map.p && port(map.p).k === map.p) zkPk = map.p;
+  set('zkRate', map.r); set('zkEinmal', map.e); set('zkJahre', map.j); set('zkRendite', map.w);
+  if (map.d !== undefined) zkDyn = +map.d;
+  if (map.P && port(map.P).k === map.P) zlPk = map.P;
+  set('zlZiel', map.Z); set('zlJahre', map.J); set('zlEinmal', map.E); set('zlRendite', map.W);
+  set('zlEntRend', map.V);
+  if (map.D !== undefined) zlDyn = +map.D;
+  zkAuto = false; zlAuto = false;
+  return true;
+}
+
+/* ═══════════════ 12. VERDRAHTUNG ═══════════════ */
+function bind() {
+  buildPicker($('zkPf'), zkPk, function (k) { zkPk = k; zkAuto = true; zkVor = +$('zkRendite').value; zkRender(); });
+  buildPicker($('zlPf'), zlPk, function (k) { zlPk = k; zlAuto = true; zlVor = +$('zlRendite').value; zlRender(); });
+
+  ['rbFrom', 'rbTo', 'rbEinmal', 'rbRate', 'rbQuote'].forEach(function (id) { $(id).addEventListener('input', rbRender); });
+  [].forEach.call(document.querySelectorAll('[data-span]'), function (c) {
+    c.addEventListener('click', function () {
+      var v = c.getAttribute('data-span').split(',');
+      $('rbFrom').value = v[0]; $('rbTo').value = v[1]; rbRender();
+    });
+  });
+  [].forEach.call(document.querySelectorAll('[data-q]'), function (c) {
+    c.addEventListener('click', function () { $('rbQuote').value = c.getAttribute('data-q'); rbRender(); });
+  });
+
+  ['zkRate', 'zkEinmal', 'zkJahre'].forEach(function (id) { $(id).addEventListener('input', zkRender); });
+  $('zkRendite').addEventListener('input', function () { zkAuto = false; zkRender(); });
+  [].forEach.call(document.querySelectorAll('.chip[data-rend]'), function (c) {
+    c.addEventListener('click', function () {
+      $('zkRendite').value = c.getAttribute('data-rend');
+      zkAuto = (c.id === 'zkOff');
+      if (!zkAuto) $('zkRenditeHint').textContent = 'Fest eingestellt auf ' + c.textContent.trim()
+        + '. Der Vorschlag richtet sich sonst nach Strategie und Laufzeit.';
+      zkRender();
+    });
+  });
+  [].forEach.call(document.querySelectorAll('.chip[data-dyn]'), function (c) {
+    c.addEventListener('click', function () {
+      zkDyn = +c.getAttribute('data-dyn');
+      [].forEach.call(document.querySelectorAll('.chip[data-dyn]'), function (o) {
+        o.setAttribute('aria-pressed', o === c ? 'true' : 'false');
+      });
+      zkRender();
+    });
+  });
+
+  $('rbTransfer').addEventListener('click', function () {
+    var num = Math.max(0, Math.min(12, parseFloat($('rbTransfer').getAttribute('data-rend')) || 6));
+    var pk = $('rbTransfer').getAttribute('data-pk') || 'balance';
+    zkPk = pk; zlPk = pk;
+    setPicker($('zkPf'), pk); setPicker($('zlPf'), pk);
+    zkAuto = false; zlAuto = false;
+    $('zkRendite').value = num;
+    $('zlRendite').value = Math.max(1, num);
+    $('zkRenditeHint').textContent = 'Übernommen aus dem Rückblick ' + $('rbRangeLabel').textContent
+      + ', abzüglich der Kosten der Zielfonds. Das ist eine Rechengröße, keine Prognose.';
+    $('zlRenditeHint').textContent = $('zkRenditeHint').textContent;
+    zkRender(); zlRender();
+    $('sparplan').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  ['zlZiel', 'zlJahre', 'zlEinmal', 'zlEntRend'].forEach(function (id) { $(id).addEventListener('input', zlRender); });
+  $('zlRendite').addEventListener('input', function () { zlAuto = false; zlRender(); });
+  $('zlVorschlag').addEventListener('click', function () {
+    $('zlRendite').value = $('zlVorschlag').getAttribute('data-zlrend');
+    zlAuto = true; zlVor = +$('zlRendite').value; zlRender();
+  });
+  [].forEach.call(document.querySelectorAll('.chip[data-zldyn]'), function (c) {
+    c.addEventListener('click', function () {
+      zlDyn = +c.getAttribute('data-zldyn');
+      [].forEach.call(document.querySelectorAll('.chip[data-zldyn]'), function (o) {
+        o.setAttribute('aria-pressed', o === c ? 'true' : 'false');
+      });
+      zlRender();
+    });
+  });
+  [].forEach.call(document.querySelectorAll('[data-ziel]'), function (c) {
+    c.addEventListener('click', function () {
+      var v = c.getAttribute('data-ziel').split(',');
+      $('zlZiel').value = v[0]; $('zlJahre').value = v[1]; zlRender();
+    });
+  });
+
+  $('pdfZk').addEventListener('click', function () { drucke(druckeSparplan()); });
+  $('pdfZl').addEventListener('click', function () { drucke(druckeZiel()); });
+  $('linkZk').addEventListener('click', function () {
+    var url = location.href.split('#')[0] + '#' + zustand();
+    try { location.hash = zustand(); } catch (e) {}
+    var msg = $('linkMsg');
+    function fertig(ok) {
+      msg.textContent = ok
+        ? 'Link kopiert. Er steht auch oben in der Adresszeile — speichern oder verschicken, '
+          + 'und der Rechner öffnet sich genau mit diesen Werten.'
+        : 'Der Link steht jetzt oben in der Adresszeile. Von dort kopieren, speichern oder verschicken.';
+      msg.className = 'hint warn';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { fertig(true); }, function () { fertig(false); });
+    } else fertig(false);
+  });
+
+  var t;
+  window.addEventListener('resize', function () {
+    clearTimeout(t);
+    t = setTimeout(function () { drawLong(); rbRender(); zkRender(); zlRender(); }, 160);
+  });
+}
+
+function reveal() {
+  var els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) {
+    [].forEach.call(els, function (e) { e.classList.add('in'); }); return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: .05 });
+  [].forEach.call(els, function (e) { io.observe(e); });
+}
+
+function init() {
+  buildCards();
+  buildStaffel();
+  bind();
+  if (ladeZustand()) {
+    setPicker($('zkPf'), zkPk); setPicker($('zlPf'), zlPk);
+    [].forEach.call(document.querySelectorAll('.chip[data-dyn]'), function (o) {
+      o.setAttribute('aria-pressed', +o.getAttribute('data-dyn') === zkDyn ? 'true' : 'false');
+    });
+    [].forEach.call(document.querySelectorAll('.chip[data-zldyn]'), function (o) {
+      o.setAttribute('aria-pressed', +o.getAttribute('data-zldyn') === zlDyn ? 'true' : 'false');
+    });
+  }
+  drawLong();
+  rbRender();
+  zkRender();
+  zlRender();
+  reveal();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { drawLong(); rbRender(); zkRender(); zlRender(); });
+  }
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+})();
+</script>
+</body>
+</html>
